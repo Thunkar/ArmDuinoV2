@@ -1,0 +1,2 @@
+"C:\\Program Files\\Java\\jdk1.7.0_71\\bin\\java.exe" -jar C:\\Users\\Gregorio\\Documents\\Repositorios\\ArmDuinoV2\\ArmDuinoBase\\ArmDuinoBase\\bin\\Debug\\ArmDuinoCore.jar COM8 115200 7 3 False 6789 True
+pause
