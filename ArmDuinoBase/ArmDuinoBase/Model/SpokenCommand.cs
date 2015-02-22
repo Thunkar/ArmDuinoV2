@@ -10,35 +10,18 @@ using System.Windows.Media;
 
 namespace ArmDuinoBase.Model
 {
-    class SpokenCommand : ArmCommand
+    public class SpokenCommand : ArmCommand
     {
-        private String response;
-        private String soundname;
-        public static MediaPlayer sound = new MediaPlayer();
+        public String Response { get; set; }
+        public String  Name {get; set;}
 
         public SpokenCommand() { }
-        public SpokenCommand(String response, String soundname)
+
+        public SpokenCommand(string Name, string Response)
         {
-            this.response = response;
-            this.soundname = soundname;  
+            this.Response = Response;
+            this.Name = Name;
         }
 
-        public SpokenCommand(String response)
-        {
-            this.response = response;
-        }
-
-        public void executeFurtherActions(out String response)
-        {
-            response = this.response;
-            sound.Stop();
-            if (this.soundname != null)
-            {
-                Uri source = new Uri("C:\\Users\\Gregorio\\Documents\\GitHub\\ArmDuino\\ArmDuino Base\\ArmDuino Base\\Assets\\" + this.soundname +".wav");
-                sound.Open(source);
-                sound.Position = TimeSpan.Zero;
-                sound.Play();
-            }
-        }
     }
 }

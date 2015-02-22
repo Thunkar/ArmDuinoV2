@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ArmDuinoBase.Model
 {
-    class ArmCommand : ICloneable
+    public class ArmCommand : ICloneable
     {
         public Queue<int[]> MovementQueue;
 

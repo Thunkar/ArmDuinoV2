@@ -108,7 +108,7 @@ namespace ArmDuinoBase
 
         void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key == Key.Enter)
+            if (e.Key == Key.Enter && Input.IsFocused)
             {
                 if (Input.Text != null)
                 {
@@ -146,6 +146,8 @@ namespace ArmDuinoBase
                         }
                     case "VoiceTab":
                         {
+                            if (!MainViewModel.Current.CommandRecognizer.Initialized)
+                                MainViewModel.Current.StartSpeechRecognition();
                             MainViewModel.Current.Arm.ControlledBySliders = false;
                             MainViewModel.Current.Arm.ControlledByVoice = true;
                             MainViewModel.Current.Arm.ControlledByGestures = false;
@@ -163,6 +165,16 @@ namespace ArmDuinoBase
                     default: break;
                 }
             }
+        }
+
+        private void Save_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModel.Current.SaveFile();
+        }
+
+        private void Play_Click(object sender, RoutedEventArgs e)
+        {
+            MainViewModel.Current.LoadAndStart(MainViewModel.Current.CurrentCommand);
         }
     }
 }

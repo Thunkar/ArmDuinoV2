@@ -142,16 +142,36 @@
                     <TabItem.Header>
                         <TextBlock Text="Voice" Style="{StaticResource TabStyle}"/>
                     </TabItem.Header>
-                    <StackPanel>
-                        <Button x:Name="ToogleVoice" />
-                        <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <StackPanel Width="700" VerticalAlignment="Center" HorizontalAlignment="Stretch">
+                        <ProgressBar VerticalAlignment="Top" Height="10" IsIndeterminate="{Binding CommandRecognizer.Busy}" Visibility="{Binding CommandRecognizer.Busy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+                        <TextBlock x:Name="WhatIHeard" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding CommandRecognizer.WhatIHeard}"/>
                     </StackPanel>
                 </TabItem>
                 <TabItem x:Name="CommanderTab">
                     <TabItem.Header>
                         <TextBlock Text="Commander" Style="{StaticResource TabStyle}"/>
                     </TabItem.Header>
-                    <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="700"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Orientation="Horizontal">
+                            <ListView x:Name="Commands" Width="200" ItemsSource="{Binding Commands}" SelectedItem="{Binding CurrentCommand, Mode=TwoWay}">
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding Name}"/>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                            <Button x:Name="Play" Margin="5" Content="Execute" Click="Play_Click"/>
+                            <Button x:Name="Save" Margin="5" Content="Save" Click="Save_Click"/>
+                        </StackPanel>
+                        <TextBox x:Name="Editor" Grid.Row="1" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Text="{Binding CurrentFile}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                    </Grid>
                 </TabItem>
             </TabControl>
         </StackPanel>

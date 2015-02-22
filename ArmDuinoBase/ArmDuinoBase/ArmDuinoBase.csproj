@@ -64,7 +64,6 @@
     <Compile Include="Converters\TextToIntConverter.cs" />
     <Compile Include="Model\Arm.cs" />
     <Compile Include="Model\ArmCommand.cs" />
-    <Compile Include="Model\ArmCommander.cs" />
     <Compile Include="Model\CommandRecognizer.cs" />
     <Compile Include="Model\ConsoleData.cs" />
     <Compile Include="Model\DummyInteractionClient.cs" />
@@ -72,6 +71,7 @@
     <Compile Include="Model\KinectHandler.cs" />
     <Compile Include="Model\SpokenCommand.cs" />
     <Compile Include="Model\TCPHandler.cs" />
+    <Compile Include="Model\CommandRecognizedEventArgs.cs" />
     <Compile Include="Model\TCPIncomingDataEventArgs.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">

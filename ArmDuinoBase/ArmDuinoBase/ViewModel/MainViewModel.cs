@@ -4,8 +4,11 @@ using Microsoft.Kinect.Toolkit.Interaction;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
+using System.Speech.AudioFormat;
+using System.Speech.Recognition;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -25,28 +28,104 @@ namespace ArmDuinoBase.ViewModel
         public Arm Arm { get; set; }
         public KinectHandler KinectHandler { get; set; }
         public KinectGestureProcessor KinectGestureProcessor { get; set; }
+        public CommandRecognizer CommandRecognizer { get; set; }
+        public ArmCommand CurrentCommand { get; set; }
 
         public ObservableCollection<ConsoleData> ConsoleLog { get; set; }
         public ObservableCollection<string> COMPorts { get; set; }
+        public ObservableCollection<SpokenCommand> Commands { get; set; }
+        public string CurrentFile { get; set; }
 
         private System.Timers.Timer SendTimer;
+        private System.Timers.Timer CommandTimer;
         private Thread KinectInitializer { get; set; }
+        private Thread VoiceControlInitializer { get; set; }
 
         public MainViewModel()
         {
-            Current = this; 
+            Current = this;
             ConsoleLog = new ObservableCollection<ConsoleData>();
             COMPorts = new ObservableCollection<string>();
+            Commands = new ObservableCollection<SpokenCommand>();
             CoreWrapper = new CoreWrapper();
             TCPHandler = new TCPHandler();
             KinectHandler = new KinectHandler();
             KinectGestureProcessor = new KinectGestureProcessor();
+            CommandRecognizer = new CommandRecognizer("es-ES");
             SendTimer = new System.Timers.Timer();
+            CommandTimer = new System.Timers.Timer();
             Arm = new Arm();
+            LoadFromFile();
             TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 100);
+            TimeSpan CommandSpan = new TimeSpan(0, 0, 0, 0, 500);
+            CommandTimer.Interval = CommandSpan.TotalMilliseconds;
             SendTimer.Interval = SendSpan.TotalMilliseconds;
             SendTimer.Elapsed += SendTimer_Elapsed;
+            CommandTimer.Elapsed += CommandTimer_Elapsed;
+            CommandRecognizer.CommandRecognized += CommandRecognizer_CommandRecognized;
         }
+
+        public void SaveFile()
+        {
+            File.WriteAllText(Directory.GetCurrentDirectory() + "//commander//commands.arm", CurrentFile);
+            LoadFromFile();
+        }
+
+        public void LoadFromFile()
+        {
+            Commands.Clear();
+            CurrentFile = "";
+            string path = Directory.GetCurrentDirectory() + "//commander";
+            string file = path + "//commands.arm";
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            if (!File.Exists(file))
+            {
+                File.Create(file);
+            }
+            StreamReader configFile = new StreamReader(file);
+            while (!configFile.EndOfStream)
+            {
+                string line = configFile.ReadLine();
+                CurrentFile += line + "\r\n";
+                if (line.StartsWith("COMMAND"))
+                {
+                    char[] separator = { ';' };
+                    String[] title = line.Split(separator);
+                    string name = title[1].Replace(";", "");
+                    name = name.Trim();
+                    string response = title[2].Replace(";", "");
+                    response = response.Trim();
+
+                    SpokenCommand command = new SpokenCommand(name, response);
+                    line = configFile.ReadLine();
+                    CurrentFile += line + "\r\n";
+                    while (line.StartsWith("KEYFRAME"))
+                    {
+                        line = line.Replace(" ", "");
+                        String[] nums = line.Split(separator);
+                        int[] data = new int[7];
+                        for (int i = 1; i < data.Length + 1; i++)
+                        {
+                            int servoCode = Int32.Parse(nums[i]);
+                            data[i - 1] = servoCode;
+                        }
+                        command.MovementQueue.Enqueue(data);
+                        line = configFile.ReadLine();
+                        CurrentFile += line + "\r\n";
+                    }
+                    CommandRecognizer.LoadCommand(command);
+                    Commands.Add(command);
+                    line = configFile.ReadLine();
+                    CurrentFile += line + "\r\n";
+                }
+            }
+            configFile.Close();
+        }
+
+
 
         internal void WriteCommand(string input)
         {
@@ -104,11 +183,18 @@ namespace ArmDuinoBase.ViewModel
 
         public void StartCOMConnection()
         {
-            CoreWrapper.InitializeCore(115200, 7, 3, false, 6789, false);
-            CoreWrapper.StartCore();
-            WriteCommand("CONNECT");
-            Arm.Connected = true;
-            SendTimer.Start();
+            try
+            {
+                CoreWrapper.InitializeCore(115200, 7, 3, false, 6789, false);
+                CoreWrapper.StartCore();
+                WriteCommand("CONNECT");
+                Arm.Connected = true;
+                SendTimer.Start();
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Couldn't connect to COM Port: " + e.Message, "Error");
+            }
         }
 
         public async void StartTCPConnection(string ip, int port)
@@ -383,6 +469,82 @@ namespace ArmDuinoBase.ViewModel
                 if (depthFrame == null)
                     return;
                 KinectHandler.interactionStream.ProcessDepth(depthFrame.GetRawPixelData(), depthFrame.Timestamp);
+            }
+        }
+
+        public void StartSpeechRecognition()
+        {
+            VoiceControlInitializer = new Thread(new ThreadStart(InitializeSpeechRecognition));
+            VoiceControlInitializer.Start();
+        }
+
+        private void InitializeSpeechRecognition()
+        {
+            CommandRecognizer.Busy = true;
+            CommandRecognizer.InitializeSpeechRecognition();
+            if (KinectHandler.Sensor != null)
+            {
+                var audioSource = MainViewModel.Current.KinectHandler.Sensor.AudioSource;
+                audioSource.BeamAngleMode = BeamAngleMode.Adaptive;
+                var kinectStream = audioSource.Start();
+                CommandRecognizer.SetInputToAudioStream(
+                        kinectStream, new SpeechAudioFormatInfo(EncodingFormat.Pcm, 16000, 16, 1, 32000, 2, null));
+
+            }
+            else
+            {
+                try
+                {
+                    CommandRecognizer.SetInputToDefaultAudioDevice();
+                }
+                catch
+                {
+                    MessageBoxResult error = MessageBox.Show("No input device found", "Le Fail", MessageBoxButton.OK, MessageBoxImage.Error);
+                    if (error == MessageBoxResult.OK) return;
+                }
+            }
+            CommandRecognizer.RecognizeAsync(RecognizeMode.Multiple);
+            CommandRecognizer.Busy = false;
+            CommandRecognizer.Initialized = true;
+        }
+
+        void CommandTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (CurrentCommand.MovementQueue.Count != 0)
+            {
+                int[] nextToSend = new int[7];
+                Array.Copy(CurrentCommand.MovementQueue.Dequeue(), nextToSend, 7);
+                Arm.BaseAng = nextToSend[0];
+                Arm.Horizontal1Ang = nextToSend[1];
+                Arm.Vertical1Ang = nextToSend[2];
+                Arm.Horizontal2Ang = nextToSend[3];
+                Arm.Vertical2Ang = nextToSend[4];
+                Arm.Horizontal3Ang = nextToSend[5];
+                Arm.Gripper = nextToSend[6];
+            }
+
+            else
+            {
+                CurrentCommand = null;
+                CommandTimer.Stop();
+            }
+        }
+
+        public void LoadAndStart(ArmCommand command)
+        {
+            CurrentCommand = (ArmCommand)command.Clone();
+            CommandTimer.Start();
+        }
+
+        void CommandRecognizer_CommandRecognized(object source, string commandName)
+        {
+            foreach (SpokenCommand command in Commands)
+            {
+                if (command.Name.Equals(commandName))
+                {
+                    LoadAndStart(command);
+                    if (command.Response != null) CommandRecognizer.Synth.SpeakAsync(command.Response);
+                }
             }
         }
 
