@@ -101,6 +101,7 @@ namespace ArmDuinoBase.Model
             try
             {
                 CoreProcess.StandardInput.WriteLine("STOP");
+                CoreProcess.WaitForExit(1000);
                 IsStarted = false;
             }
             catch (Exception e)

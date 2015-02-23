@@ -25,8 +25,8 @@ namespace ArmDuinoBase
         public MainWindow()
         {
             InitializeComponent();
-            KeyDown +=MainWindow_KeyDown;
-            this.Closed+=MainWindow_Closed;
+            KeyDown += MainWindow_KeyDown;
+            this.Closed += MainWindow_Closed;
         }
 
         private void MainWindow_Closed(object sender, EventArgs e)
@@ -82,19 +82,23 @@ namespace ArmDuinoBase
         private void ConnectCOM_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel.Current.StartCOMConnection();
-            MainViewModel.Current.CoreWrapper.CoreProcess.OutputDataReceived+=CoreProcess_OutputDataReceived;
+            MainViewModel.Current.CoreWrapper.CoreProcess.OutputDataReceived += CoreProcess_OutputDataReceived;
             Settings.IsOpen = false;
         }
 
         void CoreProcess_OutputDataReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
         {
-            Dispatcher.Invoke(new Action(() =>
+            try
             {
-                ConsoleData newData = new ConsoleData(e.Data);
-                MainViewModel.Current.ConsoleLog.Add(newData);
-                Console.ScrollIntoView(newData);
-                if (MainViewModel.Current.ConsoleLog.Count > 500) MainViewModel.Current.ConsoleLog.RemoveAt(0);
-            }));
+                Dispatcher.Invoke(new Action(() =>
+                {
+                    ConsoleData newData = new ConsoleData(e.Data);
+                    MainViewModel.Current.ConsoleLog.Add(newData);
+                    Console.ScrollIntoView(newData);
+                    if (MainViewModel.Current.ConsoleLog.Count > 500) MainViewModel.Current.ConsoleLog.RemoveAt(0);
+                }));
+            }
+            catch (Exception) { }
         }
 
         private void Send_Click(object sender, RoutedEventArgs e)
@@ -124,11 +128,11 @@ namespace ArmDuinoBase
 
             if (item != null)
             {
-                switch(item.Name)
+                switch (item.Name)
                 {
                     case "KinectTab":
                         {
-                            if(!MainViewModel.Current.KinectHandler.Started)
+                            if (!MainViewModel.Current.KinectHandler.Started)
                                 MainViewModel.Current.StartKinect();
                             MainViewModel.Current.Arm.ControlledByGestures = true;
                             MainViewModel.Current.Arm.ControlledByVoice = false;
