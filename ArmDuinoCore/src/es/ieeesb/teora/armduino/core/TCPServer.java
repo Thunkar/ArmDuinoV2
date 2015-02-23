@@ -37,16 +37,15 @@ public class TCPServer implements Runnable
 			Log.LogError(Log.SUBTYPE.TCP_SERVER, "Error initializing server: " + e.getMessage());
 		}
 	}
-	
+
 	public void write(String data)
 	{
 		try
 		{
-			DataOutputStream outToClient = new DataOutputStream(
-					connectionSocket.getOutputStream());
+			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
 			outToClient.writeBytes(data);
 		}
-		
+
 		catch (IOException e)
 		{
 			Log.LogError(Log.SUBTYPE.TCP_SERVER, "Server error: " + e.getMessage());
@@ -74,17 +73,20 @@ public class TCPServer implements Runnable
 		Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "TCP server starting");
 		while (active)
 		{
-			while(!connected)
+			while (!connected)
 			{
 				try
 				{
-					connectionSocket = socket.accept();
-					connected = true;
-					Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "Client connected");
+					if (active)
+					{
+						connectionSocket = socket.accept();
+						connected = true;
+						Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "Client connected");
+					}
 				}
 				catch (IOException e)
 				{
-					Log.LogError(Log.SUBTYPE.TCP_SERVER, "Connection error: " + e.getMessage());
+					Log.LogWarning(Log.SUBTYPE.TCP_SERVER, "Connection error: " + e.getMessage());
 					if (Log.DEBUG)
 						e.printStackTrace();
 				}

@@ -4,6 +4,7 @@ using Microsoft.Kinect.Toolkit.Interaction;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.IO.Ports;
 using System.Linq;
@@ -19,7 +20,7 @@ using System.Windows.Media.Imaging;
 
 namespace ArmDuinoBase.ViewModel
 {
-    public class MainViewModel
+    public class MainViewModel : INotifyPropertyChanged
     {
         public static MainViewModel Current { get; set; }
 
@@ -40,6 +41,7 @@ namespace ArmDuinoBase.ViewModel
         private System.Timers.Timer CommandTimer;
         private Thread KinectInitializer { get; set; }
         private Thread VoiceControlInitializer { get; set; }
+
 
         public MainViewModel()
         {
@@ -63,6 +65,38 @@ namespace ArmDuinoBase.ViewModel
             SendTimer.Elapsed += SendTimer_Elapsed;
             CommandTimer.Elapsed += CommandTimer_Elapsed;
             CommandRecognizer.CommandRecognized += CommandRecognizer_CommandRecognized;
+            CommandRecognizer.ControlCommandRecognized += CommandRecognizer_ControlCommandRecognized;
+        }
+
+        void CommandRecognizer_ControlCommandRecognized(object source, ControlCommandRecognizedEventInfo command)
+        {
+            switch (command.Type)
+            {
+                case ControlCommandRecognizedEventInfo.ControlType.GESTURE:
+                    {
+                        if (command.Activated)
+                        {
+                            Arm.SelectedTab = 1;
+                        }
+                        else
+                        {
+                            Arm.SelectedTab = 2;
+                        }
+                        break;
+                    }
+                case ControlCommandRecognizedEventInfo.ControlType.VOICE:
+                    {
+                        if (command.Activated)
+                        {
+                            Arm.SelectedTab = 2;
+                        }
+                        else
+                        {
+                            Arm.SelectedTab = 0;
+                        }
+                        break;
+                    }
+            }
         }
 
         public void SaveFile()
@@ -157,12 +191,10 @@ namespace ArmDuinoBase.ViewModel
                         SendTimer.Stop();
                         if (CoreWrapper.IsStarted)
                         {
-                            CoreWrapper.Write(input);
                             CoreWrapper.StopCore();
                         }
                         if (TCPHandler.Connected)
                         {
-                            TCPHandler.Write(input);
                             TCPHandler.Close();
                         }
                         Arm.Connected = false;
@@ -569,6 +601,13 @@ namespace ArmDuinoBase.ViewModel
             Arm.Connected = false;
             CloseCore();
             CloseTCP();
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string property)
+        {
+            if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(property));
         }
     }
 }

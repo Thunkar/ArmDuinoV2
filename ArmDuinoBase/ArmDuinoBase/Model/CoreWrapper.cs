@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace ArmDuinoBase.Model
 {
@@ -99,13 +100,12 @@ namespace ArmDuinoBase.Model
         {
             try
             {
-                CoreProcess.WaitForExit(30000);
-                CoreProcess.CancelOutputRead();
+                CoreProcess.StandardInput.WriteLine("STOP");
                 IsStarted = false;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                MessageBox.Show(e.Message, "Error");
             }
         }
 

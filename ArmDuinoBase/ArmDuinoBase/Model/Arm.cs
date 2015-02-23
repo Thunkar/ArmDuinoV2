@@ -171,6 +171,20 @@ namespace ArmDuinoBase.Model
             }
         }
 
+        private int selectedTab;
+        public int SelectedTab
+        {
+            get
+            {
+                return selectedTab;
+            }
+            set
+            {
+                selectedTab = value;
+                NotifyPropertyChanged("SelectedTab");
+            }
+        }
+
 
         public Arm()
         {

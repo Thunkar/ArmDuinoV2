@@ -71,6 +71,7 @@ namespace ArmDuinoBase.Model
 
         public void Close()
         {
+            Write("STOP");
             Connected = false;
             ReaderThread.Join();
             Stream.Flush();

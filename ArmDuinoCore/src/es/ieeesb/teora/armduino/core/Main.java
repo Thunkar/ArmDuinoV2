@@ -72,10 +72,11 @@ public class Main
 	public static void stop()
 	{
 		Log.LogEvent(Log.SUBTYPE.SYSTEM, "Shutting down");
-		commandInterpreter.setActive(false);
-		server.setActive(false);
 		if(SERVER_ENABLED && server != null)
+		{
+			server.setActive(false);
 			server.close();
+		}
 		commandSender.setActive(false);
 		protocol.closeInput();
 		protocol.closeOutput();

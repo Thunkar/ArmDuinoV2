@@ -50,7 +50,7 @@
                 <TextBlock Text="Gripper" Grid.Row="7" Style="{StaticResource h4}"/>
                 <TextBlock Text="{Binding Arm.Gripper}" Grid.Column="1" Grid.Row="7" Style="{StaticResource h4}"/>
             </Grid>
-            <TabControl SelectionChanged="TabControl_SelectionChanged">
+            <TabControl SelectionChanged="TabControl_SelectionChanged" SelectedIndex="{Binding Arm.SelectedTab}">
                 <TabItem x:Name="SliderTab">
                     <TabItem.Header>
                         <TextBlock Text="Sliders" Style="{StaticResource TabStyle}"/>

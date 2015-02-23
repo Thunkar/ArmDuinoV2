@@ -103,6 +103,27 @@ namespace ArmDuinoBase.Model
                 }
             }
         }
+
+        private event ControlCommandRecognizedEventHandler controlCommandRecognized;
+        private object controlCommandRecognizedEventLock = new object();
+        public event ControlCommandRecognizedEventHandler ControlCommandRecognized
+        {
+            add
+            {
+                lock (controlCommandRecognizedEventLock)
+                {
+                    controlCommandRecognized -= value;
+                    controlCommandRecognized += value;
+                }
+            }
+            remove
+            {
+                lock (controlCommandRecognizedEventLock)
+                {
+                    controlCommandRecognized -= value;
+                }
+            }
+        }
  
 
         public CommandRecognizer(string Language) :base(new System.Globalization.CultureInfo(Language))
@@ -127,12 +148,12 @@ namespace ArmDuinoBase.Model
             LoadGrammar(activate);
             LoadGrammar(deactivate);
 
-            GrammarBuilder gestureBuilder = new GrammarBuilder("Ok robot, activate gesture control");
+            GrammarBuilder gestureBuilder = new GrammarBuilder("Ok robot, activa el control gestual");
             gestureBuilder.Culture = new System.Globalization.CultureInfo(Language);
             Grammar activateGesture = new Grammar(gestureBuilder);
             activate.Name = "activateGesture";
 
-            GrammarBuilder deGestureBuilder = new GrammarBuilder("Ok robot, deactivate gesture control");
+            GrammarBuilder deGestureBuilder = new GrammarBuilder("Ok robot, desactiva el control gestual");
             deGestureBuilder.Culture = new System.Globalization.CultureInfo(Language);
             Grammar deactivateGesture = new Grammar(deGestureBuilder);
             deactivate.Name = "deactivateGesture";
@@ -158,19 +179,23 @@ namespace ArmDuinoBase.Model
             {
                 Synth.SpeakAsync("Cotrol por voz activado");
                 voiceControlActivated = true;
+                controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.VOICE, true));
             }
             if (e.Result.Text == "Ok robot, desactiva el control por voz" && e.Result.Confidence >= 0.5)
             {
                 Synth.SpeakAsync("Control por voz desactivado");
                 voiceControlActivated = false;
+                controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.VOICE, false));
             }
-            if (e.Result.Text == "Ok robot, activate gesture control" && e.Result.Confidence >= 0.5)
+            if (e.Result.Text == "Ok robot, activa el control gestual" && e.Result.Confidence >= 0.5)
             {
-                Synth.SpeakAsync("Gesture control activated");
+                Synth.SpeakAsync("Control gestual activado");
+                controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.GESTURE, true));
             }
-            if (e.Result.Text == "Ok robot, deactivate gesture control" && e.Result.Confidence >= 0.5)
+            if (e.Result.Text == "Ok robot, desactiva el control gestual" && e.Result.Confidence >= 0.5)
             {
-                Synth.SpeakAsync("Gesture control deactivated");
+                Synth.SpeakAsync("Control gestual desactivado");
+                controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.GESTURE, false));
             }
             if (voiceControlActivated == true && e.Result.Confidence >= 0.5) commandRecognized(this, e.Result.Text);
         }
