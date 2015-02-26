@@ -175,29 +175,29 @@ namespace ArmDuinoBase.Model
         void _recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             WhatIHeard = "";
-            if (e.Result.Text == "Ok robot, activa el control por voz" && e.Result.Confidence >= 0.5)
+            if (e.Result.Text == "Ok robot, activa el control por voz" && e.Result.Confidence >= 0.7)
             {
                 Synth.SpeakAsync("Cotrol por voz activado");
                 voiceControlActivated = true;
                 controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.VOICE, true));
             }
-            if (e.Result.Text == "Ok robot, desactiva el control por voz" && e.Result.Confidence >= 0.5)
+            if (e.Result.Text == "Ok robot, desactiva el control por voz" && e.Result.Confidence >= 0.65)
             {
                 Synth.SpeakAsync("Control por voz desactivado");
                 voiceControlActivated = false;
                 controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.VOICE, false));
             }
-            if (e.Result.Text == "Ok robot, activa el control gestual" && e.Result.Confidence >= 0.5)
+            if (e.Result.Text == "Ok robot, activa el control gestual" && e.Result.Confidence >= 0.7)
             {
                 Synth.SpeakAsync("Control gestual activado");
                 controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.GESTURE, true));
             }
-            if (e.Result.Text == "Ok robot, desactiva el control gestual" && e.Result.Confidence >= 0.5)
+            if (e.Result.Text == "Ok robot, desactiva el control gestual" && e.Result.Confidence >= 0.65)
             {
                 Synth.SpeakAsync("Control gestual desactivado");
                 controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.GESTURE, false));
             }
-            if (voiceControlActivated == true && e.Result.Confidence >= 0.5) commandRecognized(this, e.Result.Text);
+            if (voiceControlActivated == true && e.Result.Confidence >= 0.65) commandRecognized(this, e.Result.Text);
         }
 
 
