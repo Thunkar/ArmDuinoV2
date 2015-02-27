@@ -175,7 +175,7 @@ namespace ArmDuinoBase.Model
         void _recognizer_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             WhatIHeard = "";
-            if (e.Result.Text == "Ok robot, activa el control por voz" && e.Result.Confidence >= 0.7)
+            if (e.Result.Text == "Ok robot, activa el control por voz" && e.Result.Confidence >= 0.67)
             {
                 Synth.SpeakAsync("Cotrol por voz activado");
                 voiceControlActivated = true;
@@ -190,6 +190,7 @@ namespace ArmDuinoBase.Model
             if (e.Result.Text == "Ok robot, activa el control gestual" && e.Result.Confidence >= 0.7)
             {
                 Synth.SpeakAsync("Control gestual activado");
+				voiceControlActivated = false;
                 controlCommandRecognized(this, new ControlCommandRecognizedEventInfo(ControlCommandRecognizedEventInfo.ControlType.GESTURE, true));
             }
             if (e.Result.Text == "Ok robot, desactiva el control gestual" && e.Result.Confidence >= 0.65)

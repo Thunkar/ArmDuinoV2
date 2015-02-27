@@ -73,7 +73,7 @@ namespace ArmDuinoBase.Model
                 return environmentPath;
             }
 
-            string javaKey = "SOFTWARE\\JavaSoft\\Java Runtime Environment\\";
+            string javaKey = "SOFTWARE/JavaSoft/Java Runtime Environment/";
             using (Microsoft.Win32.RegistryKey rk = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(javaKey))
             {
                 string currentVersion = rk.GetValue("CurrentVersion").ToString();

@@ -178,7 +178,7 @@ namespace ArmDuinoBase
 
         private void Play_Click(object sender, RoutedEventArgs e)
         {
-            MainViewModel.Current.LoadAndStart(MainViewModel.Current.CurrentCommand);
+            MainViewModel.Current.LoadAndStart(MainViewModel.Current.SelectedCommand);
         }
     }
 }

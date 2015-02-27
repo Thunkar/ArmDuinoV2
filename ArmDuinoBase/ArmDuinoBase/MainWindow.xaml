@@ -160,7 +160,7 @@
                             <ColumnDefinition Width="700"/>
                         </Grid.ColumnDefinitions>
                         <StackPanel Orientation="Horizontal">
-                            <ListView x:Name="Commands" Width="200" ItemsSource="{Binding Commands}" SelectedItem="{Binding CurrentCommand, Mode=TwoWay}">
+                            <ListView x:Name="Commands" Width="200" ItemsSource="{Binding Commands}" SelectedItem="{Binding SelectedCommand, Mode=TwoWay}">
                                 <ListView.ItemTemplate>
                                     <DataTemplate>
                                         <TextBlock Text="{Binding Name}"/>
