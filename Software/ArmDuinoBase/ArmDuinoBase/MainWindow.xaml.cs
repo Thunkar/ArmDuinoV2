@@ -180,5 +180,26 @@ namespace ArmDuinoBase
         {
             MainViewModel.Current.LoadAndStart(MainViewModel.Current.SelectedCommand);
         }
-    }
+
+		private void Acc_Click(object sender, RoutedEventArgs e)
+		{
+			MainViewModel.Current.Rover.FrontLeftSpeed++;
+			MainViewModel.Current.Rover.FrontRightSpeed++;
+			MainViewModel.Current.Rover.RearLeftSpeed++;
+			MainViewModel.Current.Rover.RearRightSpeed++;
+		}
+
+		private void Dec_Click(object sender, RoutedEventArgs e)
+		{
+			MainViewModel.Current.Rover.FrontLeftSpeed--;
+			MainViewModel.Current.Rover.FrontRightSpeed--;
+			MainViewModel.Current.Rover.RearLeftSpeed--;
+			MainViewModel.Current.Rover.RearRightSpeed--;
+		}
+
+		private void ResetSpeed_Click(object sender, RoutedEventArgs e)
+		{
+			MainViewModel.Current.Rover.FrontLeftSpeed = MainViewModel.Current.Rover.FrontRightSpeed = MainViewModel.Current.Rover.RearLeftSpeed = MainViewModel.Current.Rover.RearRightSpeed = 255;
+		}
+	}
 }

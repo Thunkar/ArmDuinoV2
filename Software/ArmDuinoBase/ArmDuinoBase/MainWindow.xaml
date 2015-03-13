@@ -4,59 +4,96 @@
         xmlns:vm="clr-namespace:ArmDuinoBase.ViewModel"
         xmlns:converters="clr-namespace:ArmDuinoBase.Converters"
         Title="ArmDuinoBase" Height="768" Width="1366">
-    <Window.Resources>
-        <vm:MainViewModel x:Key="MainViewModel"/>
-        <converters:KinectCoordinatesConverter x:Key="KinectCoordinatesConverter"/>
-        <converters:BooleanToColorConverter x:Key="BooleanToColorConverter"/>
-        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
-        <converters:TextToIntConverter x:Key="TextToIntConverter"/>
-    </Window.Resources>
-    <Grid DataContext="{StaticResource MainViewModel}">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="3*"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <TextBlock Text="ArmDuino Base" FontSize="68" Margin="10"/>
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-            <Grid Margin="20">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="100"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="*"/>
-                </Grid.RowDefinitions>
-                <TextBlock Grid.ColumnSpan="2" Text="Current status" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24" FontWeight="Bold"/>
-                <TextBlock Text="Base" Grid.Row="1" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.BaseAng}" Grid.Column="1" Grid.Row="1" Style="{StaticResource h4}"/>
-                <TextBlock Text="Horizontal 1" Grid.Row="2" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.Horizontal1Ang}" Grid.Column="1" Grid.Row="2" Style="{StaticResource h4}"/>
-                <TextBlock Text="Vertical 1" Grid.Row="3" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.Vertical1Ang}" Grid.Column="1" Grid.Row="3" Style="{StaticResource h4}"/>
-                <TextBlock Text="Horizontal 2" Grid.Row="4" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.Horizontal2Ang}" Grid.Column="1" Grid.Row="4" Style="{StaticResource h4}"/>
-                <TextBlock Text="Vertical 2" Grid.Row="5" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.Vertical2Ang}" Grid.Column="1" Grid.Row="5" Style="{StaticResource h4}"/>
-                <TextBlock Text="Horizontal 3" Grid.Row="6" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.Horizontal3Ang}" Grid.Column="1" Grid.Row="6" Style="{StaticResource h4}"/>
-                <TextBlock Text="Gripper" Grid.Row="7" Style="{StaticResource h4}"/>
-                <TextBlock Text="{Binding Arm.Gripper}" Grid.Column="1" Grid.Row="7" Style="{StaticResource h4}"/>
-            </Grid>
-            <TabControl SelectionChanged="TabControl_SelectionChanged" SelectedIndex="{Binding Arm.SelectedTab}">
+	<Window.Resources>
+		<vm:MainViewModel x:Key="MainViewModel"/>
+		<converters:KinectCoordinatesConverter x:Key="KinectCoordinatesConverter"/>
+		<converters:BooleanToColorConverter x:Key="BooleanToColorConverter"/>
+		<converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+		<converters:TextToIntConverter x:Key="TextToIntConverter"/>
+	</Window.Resources>
+	<Grid DataContext="{StaticResource MainViewModel}">
+		<Grid.RowDefinitions>
+			<RowDefinition Height="100"/>
+			<RowDefinition Height="3*"/>
+			<RowDefinition Height="*"/>
+		</Grid.RowDefinitions>
+		<TextBlock Text="ArmDuino Base" FontSize="68" Margin="10"/>
+		<Grid Grid.Row="1">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="2*"/>
+				<ColumnDefinition Width="*"/>
+			</Grid.ColumnDefinitions>
+			<Grid Margin="10">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="150"/>
+					<ColumnDefinition Width="100"/>
+				</Grid.ColumnDefinitions>
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<TextBlock Grid.ColumnSpan="2" Text="Current status" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold"/>
+				<TextBlock Text="Base" Grid.Row="1" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.BaseAng}" Grid.Column="1" Grid.Row="1" Style="{StaticResource h4}"/>
+				<TextBlock Text="Horizontal 1" Grid.Row="2" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.Horizontal1Ang}" Grid.Column="1" Grid.Row="2" Style="{StaticResource h4}"/>
+				<TextBlock Text="Vertical 1" Grid.Row="3" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.Vertical1Ang}" Grid.Column="1" Grid.Row="3" Style="{StaticResource h4}"/>
+				<TextBlock Text="Horizontal 2" Grid.Row="4" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.Horizontal2Ang}" Grid.Column="1" Grid.Row="4" Style="{StaticResource h4}"/>
+				<TextBlock Text="Vertical 2" Grid.Row="5" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.Vertical2Ang}" Grid.Column="1" Grid.Row="5" Style="{StaticResource h4}"/>
+				<TextBlock Text="Horizontal 3" Grid.Row="6" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.Horizontal3Ang}" Grid.Column="1" Grid.Row="6" Style="{StaticResource h4}"/>
+				<TextBlock Text="Gripper" Grid.Row="7" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Arm.Gripper}" Grid.Column="1" Grid.Row="7" Style="{StaticResource h4}"/>
+				<TextBlock Text="Front left angle" Grid.Row="8" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.FrontLeftAng}" Grid.Column="1" Grid.Row="8" Style="{StaticResource h4}"/>
+				<TextBlock Text="Front right angle" Grid.Row="9" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.FrontRightAng}" Grid.Column="1" Grid.Row="9" Style="{StaticResource h4}"/>
+				<TextBlock Text="Rear left angle" Grid.Row="10" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.RearLeftAng}" Grid.Column="1" Grid.Row="10" Style="{StaticResource h4}"/>
+				<TextBlock Text="Rear right angle" Grid.Row="11" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.RearRightAng}" Grid.Column="1" Grid.Row="11" Style="{StaticResource h4}"/>
+				<TextBlock Text="Front left speed" Grid.Row="12" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.FrontLeftSpeed}" Grid.Column="1" Grid.Row="12" Style="{StaticResource h4}"/>
+				<TextBlock Text="Front right speed" Grid.Row="13" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.FrontRightSpeed}" Grid.Column="1" Grid.Row="13" Style="{StaticResource h4}"/>
+				<TextBlock Text="Rear left speed" Grid.Row="14" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.RearLeftSpeed}" Grid.Column="1" Grid.Row="14" Style="{StaticResource h4}"/>
+				<TextBlock Text="Rear right speed" Grid.Row="15" Style="{StaticResource h4}"/>
+				<TextBlock Text="{Binding Rover.RearRightSpeed}" Grid.Column="1" Grid.Row="15" Style="{StaticResource h4}"/>
+			</Grid>
+			<TabControl Grid.Column="1" SelectionChanged="TabControl_SelectionChanged" SelectedIndex="{Binding Arm.SelectedTab}">
 				<TabItem x:Name="SliderTab">
 					<TabItem.Header>
 						<TextBlock Text="Sliders" Style="{StaticResource TabStyle}"/>
 					</TabItem.Header>
-					<Grid Margin="0,30,0,20">
+					<Grid Margin="0,5,0,5">
 						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
 							<RowDefinition Height="*"/>
@@ -72,97 +109,117 @@
 						<Slider Maximum="180" Value="{Binding Arm.Vertical2Ang, Mode=TwoWay}" Grid.Row="4" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
 						<Slider Maximum="180" Value="{Binding Arm.Horizontal3Ang, Mode=TwoWay}" Grid.Row="5" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
 						<Slider Maximum="180" Value="{Binding Arm.Gripper, Mode=TwoWay}" Grid.Row="6" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Rover.FrontLeftAng, Mode=TwoWay}"  Grid.Row="7" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Rover.FrontRightAng, Mode=TwoWay}" Grid.Row="8" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Rover.RearLeftAng, Mode=TwoWay}" Grid.Row="9" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Rover.RearRightAng, Mode=TwoWay}" Grid.Row="10" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="500" Value="{Binding Rover.FrontLeftSpeed, Mode=TwoWay}" Grid.Row="11" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="500" Value="{Binding Rover.FrontRightSpeed, Mode=TwoWay}" Grid.Row="12" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="500" Value="{Binding Rover.RearLeftSpeed, Mode=TwoWay}" Grid.Row="13" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="500" Value="{Binding Rover.RearRightSpeed, Mode=TwoWay}" Grid.Row="14" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
 					</Grid>
 				</TabItem>
 				<TabItem x:Name="CommanderTab">
-                    <TabItem.Header>
-                        <TextBlock Text="Commander" Style="{StaticResource TabStyle}"/>
-                    </TabItem.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="50"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="700"/>
-                        </Grid.ColumnDefinitions>
-                        <StackPanel Orientation="Horizontal">
-                            <ListView x:Name="Commands" Width="200" ItemsSource="{Binding Commands}" SelectedItem="{Binding SelectedCommand, Mode=TwoWay}">
-                                <ListView.ItemTemplate>
-                                    <DataTemplate>
-                                        <TextBlock Text="{Binding Name}"/>
-                                    </DataTemplate>
-                                </ListView.ItemTemplate>
-                            </ListView>
-                            <Button x:Name="Play" Margin="5" Content="Execute" Click="Play_Click"/>
-                            <Button x:Name="Save" Margin="5" Content="Save" Click="Save_Click"/>
-                        </StackPanel>
-                        <TextBox x:Name="Editor" Grid.Row="1" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Text="{Binding CurrentFile}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
-                    </Grid>
-                </TabItem>
-            </TabControl>
-        </StackPanel>
-        <Button BorderBrush="Transparent" x:Name="SettingsButton" Background="Transparent" Margin="0,0,50,0" Height="50" VerticalAlignment="Center" HorizontalAlignment="Right" Click="SettingsButton_Click">
-            <Button.Content>
-                <Image Source="pack://application:,,,/Assets/settings.png"/>
-            </Button.Content>
-        </Button>
-        <Popup x:Name="Settings" IsOpen="False" StaysOpen="False" Placement="Center">
-            <Border BorderBrush="Gray" BorderThickness="2">
-                <StackPanel Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
-                    <TextBlock Text="Connection settings" Margin="5" FontSize="24"/>
-                    <TabControl Margin="5">
-                        <TabItem>
-                            <TabItem.Header>
-                                <TextBlock Text="COM Port"/>
-                            </TabItem.Header>
-                            <StackPanel Margin="5">
-                                <ListView x:Name="COMPorts" MinHeight="20" Margin="5" ItemsSource="{Binding COMPorts}" SelectedItem="{Binding CoreWrapper.COMPort, Mode=TwoWay}"/>
-                                <Button x:Name="ConnectCOM" Content="Connect" Margin="5"  Click="ConnectCOM_Click"/>
-                            </StackPanel>
-                        </TabItem>
-                        <TabItem>
-                            <TabItem.Header>
-                                <TextBlock Text="TCP Socket"/>
-                            </TabItem.Header>
-                            <StackPanel Margin="5">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="4*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="*"/>
-                                        <RowDefinition Height="*"/>
-                                    </Grid.RowDefinitions>
-                                    <TextBlock Text="Address" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    <TextBlock Text="Port" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                                    <TextBox Grid.Column="1" Tag="IP" x:Name="IP" Margin="5"/>
-                                    <TextBox Grid.Column="1" Grid.Row="1"  Tag="IP" x:Name="Port" Margin="5"/>
-                                </Grid>
-                                <Button x:Name="ConnectTCP" Margin="5" Content="Connect" Click="ConnectTCP_Click"/>
-                            </StackPanel>
-                        </TabItem>
-                    </TabControl>
-                </StackPanel>
-            </Border>
-        </Popup>
-        <StackPanel Grid.Row="2" Margin="100,10" VerticalAlignment="Stretch">
-            <ListView x:Name="Console" Background="Transparent" ItemsSource="{Binding ConsoleLog}" Height="100">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Background="Transparent" Text="{Binding Data}" Width="700" TextWrapping="Wrap" />
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="10*"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-                <TextBox x:Name="Input"/>
-                <Button x:Name="Send" Content="Send!" Grid.Column="1" Click="Send_Click"/>
-            </Grid>
-        </StackPanel>
-    </Grid>
+					<TabItem.Header>
+						<TextBlock Text="Commander" Style="{StaticResource TabStyle}"/>
+					</TabItem.Header>
+					<Grid>
+						<Grid.RowDefinitions>
+							<RowDefinition Height="50"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="700"/>
+						</Grid.ColumnDefinitions>
+						<StackPanel Orientation="Horizontal">
+							<ListView x:Name="Commands" Width="200" ItemsSource="{Binding Commands}" SelectedItem="{Binding SelectedCommand, Mode=TwoWay}">
+								<ListView.ItemTemplate>
+									<DataTemplate>
+										<TextBlock Text="{Binding Name}"/>
+									</DataTemplate>
+								</ListView.ItemTemplate>
+							</ListView>
+							<Button x:Name="Play" Margin="5" Content="Execute" Click="Play_Click"/>
+							<Button x:Name="Save" Margin="5" Content="Save" Click="Save_Click"/>
+						</StackPanel>
+						<TextBox x:Name="Editor" Grid.Row="1" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Text="{Binding CurrentFile}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+					</Grid>
+				</TabItem>
+			</TabControl>
+			<Grid Grid.Column="2" Margin="10">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+					<RowDefinition Height="*"/>
+				</Grid.RowDefinitions>
+				<TextBlock Grid.ColumnSpan="2" Text="Rover controls" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold"/>
+				<Button x:Name="Acc" Grid.Row="1" Content="+" FontSize="48" Click="Acc_Click"/>
+				<Button x:Name="ResetSpeed" Grid.Row="2" Content="Reset speed" FontSize="48" Click="ResetSpeed_Click"/>
+				<Button x:Name="Dec" Grid.Row="3" Content="-" FontSize="48" Click="Dec_Click"/>
+			</Grid>
+		</Grid>
+		<Button BorderBrush="Transparent" x:Name="SettingsButton" Background="Transparent" Margin="0,0,50,0" Height="50" VerticalAlignment="Center" HorizontalAlignment="Right" Click="SettingsButton_Click">
+			<Button.Content>
+				<Image Source="pack://application:,,,/Assets/settings.png"/>
+			</Button.Content>
+		</Button>
+		<Popup x:Name="Settings" IsOpen="False" StaysOpen="False" Placement="Center">
+			<Border BorderBrush="Gray" BorderThickness="2">
+				<StackPanel Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
+					<TextBlock Text="Connection settings" Margin="5" FontSize="24"/>
+					<TabControl Margin="5">
+						<TabItem>
+							<TabItem.Header>
+								<TextBlock Text="COM Port"/>
+							</TabItem.Header>
+							<StackPanel Margin="5">
+								<ListView x:Name="COMPorts" MinHeight="20" Margin="5" ItemsSource="{Binding COMPorts}" SelectedItem="{Binding CoreWrapper.COMPort, Mode=TwoWay}"/>
+								<Button x:Name="ConnectCOM" Content="Connect" Margin="5"  Click="ConnectCOM_Click"/>
+							</StackPanel>
+						</TabItem>
+						<TabItem>
+							<TabItem.Header>
+								<TextBlock Text="TCP Socket"/>
+							</TabItem.Header>
+							<StackPanel Margin="5">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="*"/>
+										<ColumnDefinition Width="4*"/>
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+									</Grid.RowDefinitions>
+									<TextBlock Text="Address" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									<TextBlock Text="Port" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="1" Tag="IP" x:Name="IP" Margin="5"/>
+									<TextBox Grid.Column="1" Grid.Row="1"  Tag="IP" x:Name="Port" Margin="5"/>
+								</Grid>
+								<Button x:Name="ConnectTCP" Margin="5" Content="Connect" Click="ConnectTCP_Click"/>
+							</StackPanel>
+						</TabItem>
+					</TabControl>
+				</StackPanel>
+			</Border>
+		</Popup>
+		<StackPanel Grid.Row="2" Margin="100,10" VerticalAlignment="Stretch">
+			<ListView x:Name="Console" Background="Transparent" ItemsSource="{Binding ConsoleLog}" Height="100">
+				<ListView.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Background="Transparent" Text="{Binding Data}" Width="700" TextWrapping="Wrap" />
+					</DataTemplate>
+				</ListView.ItemTemplate>
+			</ListView>
+			<Grid>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="10*"/>
+					<ColumnDefinition Width="*"/>
+				</Grid.ColumnDefinitions>
+				<TextBox x:Name="Input"/>
+				<Button x:Name="Send" Content="Send!" Grid.Column="1" Click="Send_Click"/>
+			</Grid>
+		</StackPanel>
+	</Grid>
 </Window>

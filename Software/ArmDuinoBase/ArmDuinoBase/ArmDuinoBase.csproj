@@ -71,6 +71,7 @@
     <Compile Include="Model\DummyInteractionClient.cs" />
     <Compile Include="Model\KinectGestureProcessor.cs" />
     <Compile Include="Model\KinectHandler.cs" />
+    <Compile Include="Model\Rover.cs" />
     <Compile Include="Model\SpokenCommand.cs" />
     <Compile Include="Model\TCPHandler.cs" />
     <Compile Include="Model\CommandRecognizedEventArgs.cs" />
