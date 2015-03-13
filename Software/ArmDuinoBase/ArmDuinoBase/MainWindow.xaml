@@ -51,103 +51,30 @@
                 <TextBlock Text="{Binding Arm.Gripper}" Grid.Column="1" Grid.Row="7" Style="{StaticResource h4}"/>
             </Grid>
             <TabControl SelectionChanged="TabControl_SelectionChanged" SelectedIndex="{Binding Arm.SelectedTab}">
-                <TabItem x:Name="SliderTab">
-                    <TabItem.Header>
-                        <TextBlock Text="Sliders" Style="{StaticResource TabStyle}"/>
-                    </TabItem.Header>
-                    <Grid Margin="0,30,0,20">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Slider Maximum="180" Value="{Binding Arm.BaseAng, Mode=TwoWay}"  Grid.Row="0" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        <Slider Maximum="180" Value="{Binding Arm.Horizontal1Ang, Mode=TwoWay}" Grid.Row="1" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        <Slider Maximum="180" Value="{Binding Arm.Vertical1Ang, Mode=TwoWay}" Grid.Row="2" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        <Slider Maximum="180" Value="{Binding Arm.Horizontal2Ang, Mode=TwoWay}" Grid.Row="3" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        <Slider Maximum="180" Value="{Binding Arm.Vertical2Ang, Mode=TwoWay}" Grid.Row="4" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        <Slider Maximum="180" Value="{Binding Arm.Horizontal3Ang, Mode=TwoWay}" Grid.Row="5" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                        <Slider Maximum="180" Value="{Binding Arm.Gripper, Mode=TwoWay}" Grid.Row="6" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
-                    </Grid>
-                </TabItem>
-                <TabItem x:Name="KinectTab">
-                    <TabItem.Header>
-                        <TextBlock Text="Kinect" Style="{StaticResource TabStyle}"/>
-                    </TabItem.Header>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-                            <TextBlock Text="Tilt angle" VerticalAlignment="Center" FontWeight="Bold"/>
-                            <Button x:Name="AngleDecrease" Content="&lt;" Click="AngleDecrease_Click"/>
-                            <TextBlock x:Name="TiltAngle" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Text="{Binding KinectHandler.Tilt, Mode=TwoWay, Converter={StaticResource TextToIntConverter}}"/>
-                            <Button x:Name="AngleIncrease" Content="&gt;" Click="AngleIncrease_Click"/>
-                        </StackPanel>
-                        <Image Grid.Row="1" Width="640" Height="480"  Source="{Binding KinectHandler.ImageFromKinect}"/>
-                        <ProgressBar Grid.Row="1" VerticalAlignment="Top" Height="10" IsIndeterminate="{Binding KinectHandler.Busy}" Visibility="{Binding KinectHandler.Busy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        <Canvas Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="640" Height="480" Background="Transparent">
-                            <Ellipse Fill="Blue" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.HeadPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.HeadPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                            <Ellipse Fill="Blue" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.LeftElbowPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.LeftElbowPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                            <Ellipse Fill="Blue" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.RightElbowPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.RightElbowPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                            <Ellipse Fill="Blue" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.LeftShoulderPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.LeftShoulderPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                            <Ellipse Fill="Blue" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.RightShoulderPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.RightShoulderPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                            <Ellipse Fill="{Binding KinectGestureProcessor.LeftGrip, Converter={StaticResource BooleanToColorConverter}}" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.LeftHandPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.LeftHandPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                            <Ellipse Fill="{Binding KinectGestureProcessor.RightGrip, Converter={StaticResource BooleanToColorConverter}}" 
-                     Height="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Width="{Binding KinectGestureProcessor.EllipseSize}" 
-                     Canvas.Top="{Binding KinectGestureProcessor.RightHandPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=Y}" 
-                     Canvas.Left="{Binding KinectGestureProcessor.RightHandPosition, Converter={StaticResource KinectCoordinatesConverter}, ConverterParameter=X}" 
-                     Stroke="White"/>
-                        </Canvas>
-                    </Grid>
-                </TabItem>
-                <TabItem x:Name="VoiceTab">
-                    <TabItem.Header>
-                        <TextBlock Text="Voice" Style="{StaticResource TabStyle}"/>
-                    </TabItem.Header>
-                    <StackPanel Width="700" VerticalAlignment="Center" HorizontalAlignment="Stretch">
-                        <ProgressBar VerticalAlignment="Top" Height="10" IsIndeterminate="{Binding CommandRecognizer.Busy}" Visibility="{Binding CommandRecognizer.Busy, Converter={StaticResource BooleanToVisibilityConverter}}"/>
-                        <TextBlock x:Name="WhatIHeard" FontSize="32" VerticalAlignment="Center" HorizontalAlignment="Center" Text="{Binding CommandRecognizer.WhatIHeard}"/>
-                    </StackPanel>
-                </TabItem>
-                <TabItem x:Name="CommanderTab">
+				<TabItem x:Name="SliderTab">
+					<TabItem.Header>
+						<TextBlock Text="Sliders" Style="{StaticResource TabStyle}"/>
+					</TabItem.Header>
+					<Grid Margin="0,30,0,20">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+							<RowDefinition Height="*"/>
+						</Grid.RowDefinitions>
+						<Slider Maximum="180" Value="{Binding Arm.BaseAng, Mode=TwoWay}"  Grid.Row="0" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Arm.Horizontal1Ang, Mode=TwoWay}" Grid.Row="1" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Arm.Vertical1Ang, Mode=TwoWay}" Grid.Row="2" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Arm.Horizontal2Ang, Mode=TwoWay}" Grid.Row="3" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Arm.Vertical2Ang, Mode=TwoWay}" Grid.Row="4" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Arm.Horizontal3Ang, Mode=TwoWay}" Grid.Row="5" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+						<Slider Maximum="180" Value="{Binding Arm.Gripper, Mode=TwoWay}" Grid.Row="6" Width="500" VerticalAlignment="Center" Orientation="Horizontal" HorizontalAlignment="Center"/>
+					</Grid>
+				</TabItem>
+				<TabItem x:Name="CommanderTab">
                     <TabItem.Header>
                         <TextBlock Text="Commander" Style="{StaticResource TabStyle}"/>
                     </TabItem.Header>
