@@ -27,13 +27,13 @@ public class Main
 
 	public static void main(String[] args)
 	{
-		String libPath = System.getProperty("user.dir") + "/lib/";
-		System.setProperty("java.library.path", libPath );
 		try
 		{
-			Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
-			fieldSysPath.setAccessible( true );
-			fieldSysPath.set( null, null );
+//			Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
+//			fieldSysPath.setAccessible( true );
+//			fieldSysPath.set( null, null );
+//			String libPath = System.getProperty("user.dir") + "/lib/";
+//			System.setProperty("java.library.path", libPath );
 			PORT = args[0];
 			BAUD_RATE = args[1];	
 			FIELD_COUNT = Integer.parseInt(args[2]);
