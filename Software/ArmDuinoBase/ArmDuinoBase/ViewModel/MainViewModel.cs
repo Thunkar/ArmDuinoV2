@@ -27,6 +27,7 @@ namespace ArmDuinoBase.ViewModel
 		public CoreWrapper CoreWrapper { get; set; }
 		public TCPHandler TCPHandler { get; set; }
 		public Arm Arm { get; set; }
+		public Rover Rover { get; set; }
 		public KinectHandler KinectHandler { get; set; }
 		public KinectGestureProcessor KinectGestureProcessor { get; set; }
 		public CommandRecognizer CommandRecognizer { get; set; }
@@ -58,7 +59,8 @@ namespace ArmDuinoBase.ViewModel
 			SendTimer = new System.Timers.Timer();
 			CommandTimer = new System.Timers.Timer();
 			Arm = new Arm();
-			LoadFromFile("commands.arm");
+			Rover = new Rover();
+			//LoadFromFile("commands.arm");
 			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 100);
 			TimeSpan CommandSpan = new TimeSpan(0, 0, 0, 0, 500);
 			CommandTimer.Interval = CommandSpan.TotalMilliseconds;
@@ -150,7 +152,7 @@ namespace ArmDuinoBase.ViewModel
 					{
 						line = line.Replace(" ", "");
 						String[] nums = line.Split(separator);
-						int[] data = new int[7];
+						int[] data = new int[15];
 						for (int i = 1; i < data.Length + 1; i++)
 						{
 							int servoCode = Int32.Parse(nums[i]);
@@ -169,8 +171,6 @@ namespace ArmDuinoBase.ViewModel
 			configFile.Close();
 		}
 
-
-
 		internal void WriteCommand(string input)
 		{
 			switch (input.ToUpper())
@@ -182,6 +182,7 @@ namespace ArmDuinoBase.ViewModel
 						if (TCPHandler.Connected)
 							TCPHandler.Write(input);
 						Arm.Connected = true;
+						Rover.Connected = true;
 						SendTimer.Start();
 						break;
 					}
@@ -193,6 +194,8 @@ namespace ArmDuinoBase.ViewModel
 						if (TCPHandler.Connected)
 							TCPHandler.Write(input);
 						Arm.Connected = false;
+						Rover.Connected = false;
+						Rover.Reset();
 						Arm.Reset();
 						break;
 					}
@@ -208,6 +211,8 @@ namespace ArmDuinoBase.ViewModel
 							TCPHandler.Close();
 						}
 						Arm.Connected = false;
+						Rover.Connected = false;
+						Rover.Reset();
 						Arm.Reset();
 						break;
 					}
@@ -227,7 +232,7 @@ namespace ArmDuinoBase.ViewModel
 		{
 			try
 			{
-				CoreWrapper.InitializeCore(115200, 7, 3, false, 6789, false);
+				CoreWrapper.InitializeCore(115200, 15, 3, false, 6789, false);
 				CoreWrapper.StartCore();
 				WriteCommand("CONNECT");
 				Arm.Connected = true;
@@ -247,6 +252,7 @@ namespace ArmDuinoBase.ViewModel
 				if (TCPHandler.Connected)
 					TCPHandler.Write("CONNECT");
 				Arm.Connected = true;
+				Rover.Connected = true;
 				SendTimer.Start();
 			}
 			catch (Exception e)
@@ -257,10 +263,12 @@ namespace ArmDuinoBase.ViewModel
 
 		void SendTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
-			if (Arm.Connected && CoreWrapper.IsStarted)
-				CoreWrapper.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper);
-			else if (Arm.Connected && TCPHandler.Connected)
-				TCPHandler.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper);
+			if (Arm.Connected && Rover.Connected && CoreWrapper.IsStarted)
+				CoreWrapper.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " +
+					+ Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
+			else if (Arm.Connected && Rover.Connected && TCPHandler.Connected)
+				TCPHandler.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " +
+					+Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
 		}
 
 
@@ -302,7 +310,6 @@ namespace ArmDuinoBase.ViewModel
 				KinectHandler.Started = true;
 			}
 		}
-
 
 		private void sensor_SkeletonFrameReady(object sender, SkeletonFrameReadyEventArgs e)
 		{
