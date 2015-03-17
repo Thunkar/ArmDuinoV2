@@ -22,7 +22,7 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="2*"/>
-				<ColumnDefinition Width="*"/>
+				<ColumnDefinition Width="2*"/>
 			</Grid.ColumnDefinitions>
 			<Grid Margin="10">
 				<Grid.ColumnDefinitions>
@@ -145,17 +145,29 @@
 						<TextBox x:Name="Editor" Grid.Row="1" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" Text="{Binding CurrentFile}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
 					</Grid>
 				</TabItem>
+				<TabItem x:Name="GamePadTab">
+					<TabItem.Header>
+						<TextBlock Text="Gamepad" Style="{StaticResource TabStyle}"/>
+					</TabItem.Header>
+					<Grid>
+
+					</Grid>
+				</TabItem>
 			</TabControl>
 			<Grid Grid.Column="2" Margin="10">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="*"/>
+					<RowDefinition Height="3*"/>
+					<RowDefinition Height="3*"/>
+					<RowDefinition Height="3*"/>
 				</Grid.RowDefinitions>
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="*"/>
+					<ColumnDefinition Width="10*"/>
+				</Grid.ColumnDefinitions>
 				<TextBlock Grid.ColumnSpan="2" Text="Rover controls" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold"/>
 				<Button x:Name="Acc" Grid.Row="1" Content="+" FontSize="48" Click="Acc_Click"/>
-				<Button x:Name="ResetSpeed" Grid.Row="2" Content="Reset speed" FontSize="48" Click="ResetSpeed_Click"/>
+				<Button x:Name="ResetSpeed" Grid.Row="2" Content="R" FontSize="48" Click="ResetSpeed_Click"/>
 				<Button x:Name="Dec" Grid.Row="3" Content="-" FontSize="48" Click="Dec_Click"/>
 			</Grid>
 		</Grid>
@@ -185,17 +197,20 @@
 							<StackPanel Margin="5">
 								<Grid>
 									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto"/>
 										<ColumnDefinition Width="*"/>
-										<ColumnDefinition Width="4*"/>
 									</Grid.ColumnDefinitions>
 									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
 										<RowDefinition Height="*"/>
 										<RowDefinition Height="*"/>
 									</Grid.RowDefinitions>
 									<TextBlock Text="Address" HorizontalAlignment="Center" VerticalAlignment="Center"/>
 									<TextBlock Text="Port" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-									<TextBox Grid.Column="1" Tag="IP" x:Name="IP" Margin="5"/>
-									<TextBox Grid.Column="1" Grid.Row="1"  Tag="IP" x:Name="Port" Margin="5"/>
+									<TextBlock Text="Video Port" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									<TextBox Grid.Column="1" x:Name="IP" Margin="5"/>
+									<TextBox Grid.Column="1" Grid.Row="1" x:Name="Port" Margin="5"/>
+									<TextBox Grid.Column="1" Grid.Row="2" x:Name="VideoPort" Margin="5"/>
 								</Grid>
 								<Button x:Name="ConnectTCP" Margin="5" Content="Connect" Click="ConnectTCP_Click"/>
 							</StackPanel>

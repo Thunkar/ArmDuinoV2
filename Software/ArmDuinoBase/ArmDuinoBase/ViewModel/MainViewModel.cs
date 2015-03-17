@@ -26,11 +26,13 @@ namespace ArmDuinoBase.ViewModel
 
 		public CoreWrapper CoreWrapper { get; set; }
 		public TCPHandler TCPHandler { get; set; }
+		public WebcamWrapper WebcamWrapper { get; set; }
 		public Arm Arm { get; set; }
 		public Rover Rover { get; set; }
 		public KinectHandler KinectHandler { get; set; }
 		public KinectGestureProcessor KinectGestureProcessor { get; set; }
 		public CommandRecognizer CommandRecognizer { get; set; }
+		public GamepadState GamepadState { get; set; }
 		public ArmCommand CurrentCommand { get; set; }
 		public ArmCommand SelectedCommand { get; set; }
 
@@ -41,6 +43,8 @@ namespace ArmDuinoBase.ViewModel
 
 		private System.Timers.Timer SendTimer;
 		private System.Timers.Timer CommandTimer;
+		private System.Timers.Timer GamePadTimer;
+
 		private Thread KinectInitializer { get; set; }
 		private Thread VoiceControlInitializer { get; set; }
 
@@ -53,22 +57,60 @@ namespace ArmDuinoBase.ViewModel
 			Commands = new ObservableCollection<SpokenCommand>();
 			CoreWrapper = new CoreWrapper();
 			TCPHandler = new TCPHandler();
+			WebcamWrapper = new WebcamWrapper();
 			KinectHandler = new KinectHandler();
 			KinectGestureProcessor = new KinectGestureProcessor();
 			CommandRecognizer = new CommandRecognizer("es-ES");
+			GamepadState = new GamepadState(SlimDX.XInput.UserIndex.One);
 			SendTimer = new System.Timers.Timer();
 			CommandTimer = new System.Timers.Timer();
+			GamePadTimer = new System.Timers.Timer();
 			Arm = new Arm();
 			Rover = new Rover();
 			//LoadFromFile("commands.arm");
 			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 100);
 			TimeSpan CommandSpan = new TimeSpan(0, 0, 0, 0, 500);
+			TimeSpan GamePadSpan = new TimeSpan(0, 0, 0, 0, 10);
 			CommandTimer.Interval = CommandSpan.TotalMilliseconds;
 			SendTimer.Interval = SendSpan.TotalMilliseconds;
+			GamePadTimer.Interval = GamePadSpan.TotalMilliseconds;
 			SendTimer.Elapsed += SendTimer_Elapsed;
 			CommandTimer.Elapsed += CommandTimer_Elapsed;
+			GamePadTimer.Elapsed += GamePadTimer_Elapsed;
 			CommandRecognizer.CommandRecognized += CommandRecognizer_CommandRecognized;
 			CommandRecognizer.ControlCommandRecognized += CommandRecognizer_ControlCommandRecognized;
+		}
+
+		public void StartGamePad()
+		{
+			GamePadTimer.Start();
+		}
+
+		private void GamePadTimer_Elapsed(object sender, ElapsedEventArgs e)
+		{
+			GamepadState.Update();
+			Arm.BaseAng += (int)(5*GamepadState.LeftStick.Position.X);
+			Arm.Horizontal1Ang += (int)(5*GamepadState.LeftStick.Position.Y);
+			Arm.Vertical1Ang += (int)(5 * GamepadState.RightStick.Position.X);
+			Arm.Horizontal2Ang += (int)(5 * GamepadState.RightStick.Position.Y);
+			if (GamepadState.LeftTrigger >= 0.5)
+			{
+				Arm.Gripper++;
+			}
+			if (GamepadState.RightTrigger >= 0.5)
+			{
+				Arm.Gripper--;
+			}
+			if (GamepadState.DPad.Up)
+			{
+				Arm.Horizontal3Ang += 3;
+			}
+			if (GamepadState.DPad.Down)
+			{
+				Arm.Horizontal3Ang -= 3;
+			}
+			Arm.Normalize();
+			if (!Arm.ControlledByGamePad) GamePadTimer.Stop();
 		}
 
 		void CommandRecognizer_ControlCommandRecognized(object source, ControlCommandRecognizedEventInfo command)
@@ -244,6 +286,19 @@ namespace ArmDuinoBase.ViewModel
 			}
 		}
 
+		public void StartVideoConnection(string ip, int port)
+		{
+			try
+			{
+				WebcamWrapper.InitializeFeed(ip, port.ToString());
+				WebcamWrapper.StartCambozola();
+			}
+			catch (Exception e)
+			{
+				MessageBox.Show("Couldn't connect to COM Port: " + e.Message, "Error");
+			}
+		}
+
 		public async void StartTCPConnection(string ip, int port)
 		{
 			try
@@ -265,12 +320,11 @@ namespace ArmDuinoBase.ViewModel
 		{
 			if (Arm.Connected && Rover.Connected && CoreWrapper.IsStarted)
 				CoreWrapper.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " +
-					+ Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
+					+Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
 			else if (Arm.Connected && Rover.Connected && TCPHandler.Connected)
 				TCPHandler.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " +
 					+Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
 		}
-
 
 		public void Refresh()
 		{
@@ -619,11 +673,20 @@ namespace ArmDuinoBase.ViewModel
 			}
 		}
 
+		public void CloseWebcam()
+		{
+			if (WebcamWrapper.IsStarted)
+			{
+				WebcamWrapper.StopWebcam();
+			}
+		}
+
 		public void CloseAll()
 		{
 			Arm.Connected = false;
 			CloseCore();
 			CloseTCP();
+			CloseWebcam();
 		}
 
 		public event PropertyChangedEventHandler PropertyChanged;

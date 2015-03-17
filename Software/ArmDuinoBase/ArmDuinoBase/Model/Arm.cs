@@ -87,6 +87,7 @@ namespace ArmDuinoBase.Model
                 NotifyPropertyChanged("Horizontal3Ang");
             }
         }
+
         private int gripper;
         public int Gripper
         {
@@ -97,7 +98,7 @@ namespace ArmDuinoBase.Model
             set
             {
                 gripper = value;
-                NotifyPropertyChanged("Pinza");
+                NotifyPropertyChanged("Gripper");
             }
         }
 
@@ -171,7 +172,21 @@ namespace ArmDuinoBase.Model
             }
         }
 
-        private int selectedTab;
+		private bool controlledByGamePad;
+		public bool ControlledByGamePad
+		{
+			get
+			{
+				return controlledByGamePad;
+			}
+			set
+			{
+				controlledByGamePad = value;
+				NotifyPropertyChanged("ControlledByGamePad");
+			}
+		}
+
+		private int selectedTab;
         public int SelectedTab
         {
             get
@@ -207,6 +222,24 @@ namespace ArmDuinoBase.Model
             Horizontal3Ang = 90;
             Gripper = 170;
         }
+
+		public void Normalize()
+		{
+			if (BaseAng > 180) BaseAng = 180;
+			if (BaseAng < 0) BaseAng = 0;
+			if (Horizontal1Ang > 180) Horizontal1Ang = 180;
+			if (Horizontal1Ang < 0) Horizontal1Ang = 0;
+			if (Vertical1Ang > 180) Vertical1Ang = 180;
+			if (Vertical1Ang < 0) Vertical1Ang = 0;
+			if (Horizontal2Ang > 180) Horizontal2Ang = 180;
+			if (Horizontal2Ang < 0) Horizontal2Ang = 0;
+			if (Vertical2Ang > 180) Vertical2Ang = 180;
+			if (Vertical2Ang < 0) Vertical2Ang = 0;
+			if (Horizontal3Ang > 180) Horizontal3Ang = 180;
+			if (Horizontal3Ang < 0) Horizontal3Ang = 0;
+			if (Gripper > 170) Gripper = 170;
+			if (Gripper < 110) Gripper = 110;
+		}
 
 
         public event PropertyChangedEventHandler PropertyChanged;

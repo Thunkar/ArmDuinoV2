@@ -11,9 +11,9 @@ using System.Windows;
 
 namespace ArmDuinoBase.Model
 {
-	public class CoreWrapper : INotifyPropertyChanged
+	public class WebcamWrapper : INotifyPropertyChanged
 	{
-		public Process CoreProcess { get; set; }
+		public Process CambozolaProcess { get; set; }
 		private bool isStarted;
 		public bool IsStarted
 		{
@@ -27,41 +27,28 @@ namespace ArmDuinoBase.Model
 				NotifyPropertyChanged("IsStarted");
 			}
 		}
-		private string comPort;
-		public string COMPort
-		{
-			get
-			{
-				return comPort;
-			}
-			set
-			{
-				comPort = value;
-				NotifyPropertyChanged("COMPort");
-			}
-		}
 
-		public CoreWrapper()
+
+		public WebcamWrapper()
 		{
 			IsStarted = false;
 		}
 
-		public void InitializeCore(long speed, int segments, int fields, bool server, int port, bool debug)
+		public void InitializeFeed(string ip, string videoport)
 		{
-			CoreProcess = new Process();
+			CambozolaProcess = new Process();
 			string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-			string starter = "-jar " + currentDir + "\\ArmDuinoCore\\ArmDuinoCore.jar " + COMPort + " " + speed + " " + segments + " " + fields + " " + server + " " + port + " " + debug;
+			string starter = "-jar " + currentDir + "\\cambozola.jar http://" + ip + ":" + videoport;
 			string javaPath = GetJavaInstallationPath();
 			if (!string.IsNullOrEmpty(javaPath))
 			{
-
 				var startInfo = new ProcessStartInfo(javaPath + "\\java.exe", starter);
-				startInfo.WorkingDirectory = currentDir + "\\ArmDuinoCore";
+				startInfo.WorkingDirectory = currentDir;
 				startInfo.RedirectStandardInput = startInfo.RedirectStandardOutput = true;
 				startInfo.UseShellExecute = false;
 				startInfo.CreateNoWindow = true;
-				CoreProcess.StartInfo = startInfo;
-				CoreProcess.EnableRaisingEvents = true;
+				CambozolaProcess.StartInfo = startInfo;
+				CambozolaProcess.EnableRaisingEvents = true;
 			}
 		}
 
@@ -86,23 +73,21 @@ namespace ArmDuinoBase.Model
 
 		public void Write(string input)
 		{
-			CoreProcess.StandardInput.WriteLine(input);
+			CambozolaProcess.StandardInput.WriteLine(input);
 		}
 
-		public void StartCore()
+		public void StartCambozola()
 		{
-			CoreProcess.Start();
+			CambozolaProcess.Start();
 			IsStarted = true; ;
-			CoreProcess.BeginOutputReadLine();
+			CambozolaProcess.BeginOutputReadLine();
 		}
 
-		public void StopCore()
+		public void StopWebcam()
 		{
 			try
 			{
-				CoreProcess.StandardInput.WriteLine("STOP");
-				CoreProcess.WaitForExit(1000);
-				try { CoreProcess.Kill(); } catch { };
+				CambozolaProcess.Kill();
 				IsStarted = false;
 			}
 			catch (Exception e)
