@@ -1,4 +1,15 @@
+#include <SoftPWM.h>
+#include <SoftPWM_timer.h>
 #include <Servo.h>
+
+const int FIELD_COUNT = 15;
+const int FIELD_SIZE = 3;
+const int SERVO_COUNT=11;
+
+typedef struct motor{
+  int forward;
+  int backward;
+} Motor;
 
 //Servo definitions
 Servo base;
@@ -8,29 +19,35 @@ Servo horizontal2;
 Servo vertical2;
 Servo horizontal3;
 Servo gripper;
+Servo flAngle;
+Servo frAngle;
+Servo blAngle;
+Servo brAngle;
+Motor flSpeed;
+Motor frSpeed;
+Motor blSpeed;
+Motor brSpeed;
 //Servo array
-Servo servos[] = {base, horizontal1, vertical1, horizontal2, vertical2, horizontal3, gripper  };
+Servo servos[] = {base, horizontal1, vertical1, horizontal2, vertical2, horizontal3, gripper, flAngle,frAngle,blAngle,brAngle  };
+Motor motors[] = {flSpeed,frSpeed,blSpeed,brSpeed};
 //Instant positions of the servos
-int positions[] = {90,90,90,90,90,90,170};
+int positions[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0};
 //Target position that servos have to reach
-int targets[] = {90,90,90,90,90,90,170};
-//Indicates wether the servos have reached their targets
-boolean movementStatus[] = {true, true, true, true, true, true, true};
+int targets[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0};
+//Indicates wether the servos have reached their targets 
+boolean movementStatus[] = {true, true, true, true, true, true, true,true,true,true,true,true,true,true,true};
 //Store the time each servo has to move a step
-long stepTimer[7];
+long stepTimer[FIELD_COUNT];
 //Stores last time a servo performed a step
-long lastSteps[7];
+long lastSteps[FIELD_COUNT];
 //Global time the arm has to complete the next target
 long movementPeriod = 500000;
 
 
-const int FIELD_COUNT = 7;
-const int FIELD_SIZE = 3;
-
 int incomingByte;
 int readCounter;
 char buffer[FIELD_COUNT*FIELD_SIZE+3];
-int data[] = {90,90,90,90,90,90,170};
+int data[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0};
 int multiplier[] = {1, 10, 100, 1000, 10000};
 boolean reading;
 
@@ -74,6 +91,14 @@ void setTargets(int data[]){
   targets[4] = data[4];
   targets[5] = data[5];
   targets[6] = data[6];
+  targets[7] = data[7];
+  targets[8] = data[8];
+  targets[9] = data[9];
+  targets[10] = data[10];
+  targets[11] = data[11];
+  targets[12] = data[12];
+  targets[13] = data[13];
+  targets[14] = data[14];
   for(int i = 0; i < FIELD_COUNT; i++)
   {
     int difference = abs(positions[i]-targets[i]);
@@ -98,12 +123,28 @@ void moveStep(int servo, int target){
   {
     if(positions[servo]<target){
       positions[servo] += 1;
-      servos[servo].write(positions[servo]);
+      if(servo<SERVO_COUNT){
+        servos[servo].write(positions[servo]);
+      }else{
+        if(positions[servo]>255){
+          SoftPWMSet(motors[servo-SERVO_COUNT].forward,positions[servo]-256);
+        }else{
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,positions[servo]);
+        }
+      }
       lastSteps[servo] = micros();
     }
     else{
       positions[servo] -= 1;
-      servos[servo].write(positions[servo]);
+      if(servo<SERVO_COUNT){
+        servos[servo].write(positions[servo]);
+      }else{
+        if(positions[servo]>255){
+          SoftPWMSet(motors[servo-SERVO_COUNT].forward,positions[servo]-256);
+        }else{
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,positions[servo]);
+        }
+      }
       lastSteps[servo] = micros();
     }
   }
@@ -115,9 +156,11 @@ void moveStep(int servo, int target){
 */
 
 void moveSegments(){
-    for(int i = 0; i < 6; i++)
+    for(int i = 0; i < FIELD_COUNT; i++)
     {
-      moveStep(i, targets[i]);
+      if(i!=6){
+        moveStep(i, targets[i]);
+      }
     }
     servos[6].write(targets[6]); // Instantly move gripper
 } 
@@ -134,7 +177,15 @@ boolean sameTargets(int data[]){
   targets[3] == 180- data[3] & 
   targets[4] == data[4] &
   targets[5] == data[5] &
-  targets[6] == data[6];
+  targets[6] == data[6] &
+  targets[7] == data[7] &
+  targets[8] == data[8] &
+  targets[9] == data[9] &
+  targets[10] == data[10] &
+  targets[11] == data[11] &
+  targets[12] == data[12] &
+  targets[13] == data[13] &
+  targets[14] == data[14];
 }
 
 /*
@@ -169,11 +220,14 @@ void processMovementData()
     return;
   }
   int counter = 0;
-  clearData();
+ // clearData();
   for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE)
   {
       for(int j = 0; j < FIELD_SIZE; j ++)
       {
+        if(j==0&&(int)buffer[i+j]-0x30==0){ //IF the first number of the  field is zero, don't modify current data
+          break;
+        }
         data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j -1];
       }
       counter++;
@@ -240,6 +294,15 @@ void reset()
     horizontal2.write(90);
     delay(500);
     horizontal3.write(90);
+    delay(500);
+    flAngle.write(90);
+    delay(500);
+    frAngle.write(90);
+    delay(500);
+    blAngle.write(90);
+    delay(500);
+    brAngle.write(90);
+    
     // gripper signal to indicate we are ready to receive stuff
     delay(300);
     gripper.write(90);
@@ -285,19 +348,37 @@ void setup()
     delay(500);
     vertical1.attach(5);
     delay(500);
-    vertical2.attach(9);
+    //vertical2.attach(9);
     delay(500);
     horizontal1.attach(12);
     delay(500);
     horizontal2.attach(10);
     delay(500);
     horizontal3.attach(8);
+    delay(500);
+    flAngle.attach(11);
+    delay(500);
+    frAngle.attach(2);
+    delay(500);
+    blAngle.attach(3);
+    delay(500);
+    brAngle.attach(4);
+    flSpeed.forward=A0;
+    flSpeed.backward=A1;
+    frSpeed.forward=A2;
+    frSpeed.backward=A3;
+    blSpeed.forward=A4;
+    blSpeed.backward=A5;
+    brSpeed.forward=9;
+    brSpeed.backward=13;
+    
     // gripper signal to indicate we are ready to receive stuff
     delay(300);
     gripper.write(90);
     delay(200);
     gripper.write(170);
     Serial.begin(115200);
+     SoftPWMBegin();
 }
 
 
