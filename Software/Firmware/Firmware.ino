@@ -223,10 +223,11 @@ void processMovementData()
  // clearData();
   for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE)
   {
-    if((int)buffer[i]-0x30==1){ //IF the first number of the  field is zero, don't modify current data         
+    if((int)buffer[i]-0x30==1){ //IF the first number of the  field is zero, don't modify current data 
+      data[counter]=0;    
       for(int j = 1; j < FIELD_SIZE; j ++)
       {
-        data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j -2];
+        data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j-1];
       }
       counter++;
     }
