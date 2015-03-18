@@ -68,7 +68,7 @@ namespace ArmDuinoBase.ViewModel
 			Arm = new Arm();
 			Rover = new Rover();
 			//LoadFromFile("commands.arm");
-			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 100);
+			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 50);
 			TimeSpan CommandSpan = new TimeSpan(0, 0, 0, 0, 500);
 			TimeSpan GamePadSpan = new TimeSpan(0, 0, 0, 0, 10);
 			CommandTimer.Interval = CommandSpan.TotalMilliseconds;
@@ -95,11 +95,11 @@ namespace ArmDuinoBase.ViewModel
 			Arm.Horizontal2Ang += (int)(5 * GamepadState.RightStick.Position.Y);
 			if (GamepadState.LeftTrigger >= 0.5)
 			{
-				Arm.Gripper++;
+				Arm.Gripper = 110;
 			}
 			if (GamepadState.RightTrigger >= 0.5)
 			{
-				Arm.Gripper--;
+				Arm.Gripper = 170;
 			}
 			if (GamepadState.DPad.Up)
 			{

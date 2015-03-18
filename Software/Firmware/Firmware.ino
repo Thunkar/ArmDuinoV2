@@ -41,7 +41,7 @@ long stepTimer[FIELD_COUNT];
 //Stores last time a servo performed a step
 long lastSteps[FIELD_COUNT];
 //Global time the arm has to complete the next target
-long movementPeriod = 500000;
+long movementPeriod = 100000;
 
 
 int incomingByte;
