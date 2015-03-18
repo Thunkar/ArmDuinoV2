@@ -3,7 +3,7 @@
 #include <Servo.h>
 
 const int FIELD_COUNT = 15;
-const int FIELD_SIZE = 3;
+const int FIELD_SIZE = 4;
 const int SERVO_COUNT=11;
 
 typedef struct motor{
@@ -223,14 +223,13 @@ void processMovementData()
  // clearData();
   for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE)
   {
-      for(int j = 0; j < FIELD_SIZE; j ++)
+    if((int)buffer[i]-0x30==1){ //IF the first number of the  field is zero, don't modify current data         
+      for(int j = 1; j < FIELD_SIZE; j ++)
       {
-        if(j==0&&(int)buffer[i+j]-0x30==0){ //IF the first number of the  field is zero, don't modify current data
-          break;
-        }
-        data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j -1];
+        data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j -2];
       }
       counter++;
+    }
   }
 }
 
