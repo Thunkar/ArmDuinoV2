@@ -38,6 +38,10 @@
     <Reference Include="Microsoft.Kinect.Toolkit.Interaction">
       <HintPath>..\..\..\..\..\..\..\Program Files\Microsoft SDKs\Kinect\Developer Toolkit v1.8.0\Assemblies\Microsoft.Kinect.Toolkit.Interaction.dll</HintPath>
     </Reference>
+    <Reference Include="SlimDX, Version=4.0.13.43, Culture=neutral, PublicKeyToken=b1b0c32fd1ffe4f9, processorArchitecture=x86">
+      <HintPath>..\packages\SlimDX.4.0.13.44\lib\NET40\SlimDX.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Speech" />
@@ -69,12 +73,15 @@
     <Compile Include="Model\ConsoleData.cs" />
     <Compile Include="Model\ControlCommandRecognizedEventInfo.cs" />
     <Compile Include="Model\DummyInteractionClient.cs" />
+    <Compile Include="Model\GamepadState.cs" />
     <Compile Include="Model\KinectGestureProcessor.cs" />
     <Compile Include="Model\KinectHandler.cs" />
+    <Compile Include="Model\Rover.cs" />
     <Compile Include="Model\SpokenCommand.cs" />
     <Compile Include="Model\TCPHandler.cs" />
     <Compile Include="Model\CommandRecognizedEventArgs.cs" />
     <Compile Include="Model\TCPIncomingDataEventArgs.cs" />
+    <Compile Include="Model\WebcamWrapper.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -108,6 +115,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

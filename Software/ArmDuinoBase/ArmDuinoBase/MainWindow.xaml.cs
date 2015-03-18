@@ -55,10 +55,13 @@ namespace ArmDuinoBase
         private void ConnectTCP_Click(object sender, RoutedEventArgs e)
         {
             int port = 0;
-            if (Int32.TryParse(Port.Text, out port))
+			int videoPort = 0;
+            if (Int32.TryParse(Port.Text, out port) && Int32.TryParse(VideoPort.Text, out videoPort))
             {
                 MainViewModel.Current.StartTCPConnection(IP.Text, port);
+				MainViewModel.Current.StartVideoConnection(IP.Text, videoPort);
                 MainViewModel.Current.TCPHandler.IncomingData += TCPHandler_IncomingData;
+				MainViewModel.Current.WebcamWrapper.CambozolaProcess.OutputDataReceived += CambozolaProcess_OutputDataReceived;
             }
             else
             {
@@ -68,7 +71,22 @@ namespace ArmDuinoBase
 
         }
 
-        void TCPHandler_IncomingData(object source, string incomingData)
+		private void CambozolaProcess_OutputDataReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
+		{
+			try
+			{
+				Dispatcher.Invoke(new Action(() =>
+				{
+					ConsoleData newData = new ConsoleData(e.Data);
+					MainViewModel.Current.ConsoleLog.Add(newData);
+					Console.ScrollIntoView(newData);
+					if (MainViewModel.Current.ConsoleLog.Count > 500) MainViewModel.Current.ConsoleLog.RemoveAt(0);
+				}));
+			}
+			catch (Exception) { }
+		}
+
+		void TCPHandler_IncomingData(object source, string incomingData)
         {
             Dispatcher.Invoke(new Action(() =>
             {
@@ -138,7 +156,8 @@ namespace ArmDuinoBase
                             MainViewModel.Current.Arm.ControlledByVoice = false;
                             MainViewModel.Current.Arm.ControlledBySliders = false;
                             MainViewModel.Current.Arm.ControlledByCommander = false;
-                            break;
+							MainViewModel.Current.Arm.ControlledByGamePad = false;
+							break;
                         }
                     case "SliderTab":
                         {
@@ -146,7 +165,8 @@ namespace ArmDuinoBase
                             MainViewModel.Current.Arm.ControlledByVoice = false;
                             MainViewModel.Current.Arm.ControlledByGestures = false;
                             MainViewModel.Current.Arm.ControlledByCommander = false;
-                            break;
+							MainViewModel.Current.Arm.ControlledByGamePad = false;
+							break;
                         }
                     case "VoiceTab":
                         {
@@ -156,7 +176,8 @@ namespace ArmDuinoBase
                             MainViewModel.Current.Arm.ControlledByVoice = true;
                             MainViewModel.Current.Arm.ControlledByGestures = false;
                             MainViewModel.Current.Arm.ControlledByCommander = false;
-                            break;
+							MainViewModel.Current.Arm.ControlledByGamePad = false;
+							break;
                         }
                     case "CommanderTab":
                         {
@@ -164,8 +185,19 @@ namespace ArmDuinoBase
                             MainViewModel.Current.Arm.ControlledByVoice = false;
                             MainViewModel.Current.Arm.ControlledByGestures = false;
                             MainViewModel.Current.Arm.ControlledByCommander = true;
-                            break;
+							MainViewModel.Current.Arm.ControlledByGamePad = false;
+							break;
                         }
+					case "GamePadTab":
+						{
+							MainViewModel.Current.StartGamePad();
+							MainViewModel.Current.Arm.ControlledBySliders = false;
+							MainViewModel.Current.Arm.ControlledByVoice = false;
+							MainViewModel.Current.Arm.ControlledByGestures = false;
+							MainViewModel.Current.Arm.ControlledByCommander = false;
+							MainViewModel.Current.Arm.ControlledByGamePad = true;
+							break;
+						}
                     default: break;
                 }
             }
@@ -180,5 +212,26 @@ namespace ArmDuinoBase
         {
             MainViewModel.Current.LoadAndStart(MainViewModel.Current.SelectedCommand);
         }
-    }
+
+		private void Acc_Click(object sender, RoutedEventArgs e)
+		{
+			MainViewModel.Current.Rover.FrontLeftSpeed++;
+			MainViewModel.Current.Rover.FrontRightSpeed++;
+			MainViewModel.Current.Rover.RearLeftSpeed++;
+			MainViewModel.Current.Rover.RearRightSpeed++;
+		}
+
+		private void Dec_Click(object sender, RoutedEventArgs e)
+		{
+			MainViewModel.Current.Rover.FrontLeftSpeed--;
+			MainViewModel.Current.Rover.FrontRightSpeed--;
+			MainViewModel.Current.Rover.RearLeftSpeed--;
+			MainViewModel.Current.Rover.RearRightSpeed--;
+		}
+
+		private void ResetSpeed_Click(object sender, RoutedEventArgs e)
+		{
+			MainViewModel.Current.Rover.FrontLeftSpeed = MainViewModel.Current.Rover.FrontRightSpeed = MainViewModel.Current.Rover.RearLeftSpeed = MainViewModel.Current.Rover.RearRightSpeed = 255;
+		}
+	}
 }
