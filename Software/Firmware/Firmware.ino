@@ -229,8 +229,8 @@ void processMovementData()
       {
         data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j-1];
       }
-      counter++;
     }
+    counter++;
   }
 }
 
@@ -272,7 +272,7 @@ void dumpInputBuffer()
 void reset()
 {
     digitalWrite(13, HIGH);
-    for(int i = 0; i < 6; i++) 
+    for(int i = 0; i < FIELD_COUNT; i++) 
     {
       positions[i] = 90;
       targets[i] = 90;

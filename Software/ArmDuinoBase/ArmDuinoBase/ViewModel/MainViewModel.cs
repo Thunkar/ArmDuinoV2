@@ -68,7 +68,7 @@ namespace ArmDuinoBase.ViewModel
 			Arm = new Arm();
 			Rover = new Rover();
 			//LoadFromFile("commands.arm");
-			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 50);
+			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 100);
 			TimeSpan CommandSpan = new TimeSpan(0, 0, 0, 0, 500);
 			TimeSpan GamePadSpan = new TimeSpan(0, 0, 0, 0, 10);
 			CommandTimer.Interval = CommandSpan.TotalMilliseconds;
@@ -223,8 +223,8 @@ namespace ArmDuinoBase.ViewModel
 							CoreWrapper.Write(input);
 						if (TCPHandler.Connected)
 							TCPHandler.Write(input);
-						//Arm.Connected = true;
-						Rover.Connected = true;
+						Arm.Connected = true;
+						//Rover.Connected = true;
 						SendTimer.Start();
 						break;
 					}
