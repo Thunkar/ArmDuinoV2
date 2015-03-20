@@ -1,20 +1,19 @@
 package es.ieeesb.teora.armduino.core;
 
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import es.ieeesb.teora.armduino.util.Log;
 
 public class TCPServer implements Runnable
 {
 	private ServerSocket socket;
-	private Socket connectionSocket;
 	private boolean active = true;
-	private boolean connected = false;
+
+	public static LinkedBlockingQueue<Socket> Clients = new LinkedBlockingQueue<Socket>();
 
 	public boolean isActive()
 	{
@@ -38,20 +37,29 @@ public class TCPServer implements Runnable
 		}
 	}
 
-	public void write(String data)
+	public static void write(String data)
 	{
-		try
+		for (Socket client : Clients)
 		{
-			DataOutputStream outToClient = new DataOutputStream(connectionSocket.getOutputStream());
-			outToClient.writeBytes(data);
+			if (client.isClosed())
+			{
+				Clients.remove(client);
+				continue;
+			}
+			try
+			{
+				DataOutputStream outToClient = new DataOutputStream(client.getOutputStream());
+				outToClient.writeBytes(data);
+			}
+			catch (IOException e)
+			{
+				Clients.remove(client);
+				Log.LogError(Log.SUBTYPE.TCP_SERVER, "Server writing error: " + e.getMessage());
+				if (Log.DEBUG)
+					e.printStackTrace();
+			}
 		}
 
-		catch (IOException e)
-		{
-			Log.LogError(Log.SUBTYPE.TCP_SERVER, "Server error: " + e.getMessage());
-			if (Log.DEBUG)
-				e.printStackTrace();
-		}
 	}
 
 	public void close()
@@ -63,7 +71,7 @@ public class TCPServer implements Runnable
 		}
 		catch (IOException e)
 		{
-			Log.LogError(Log.SUBTYPE.TCP_SERVER, "Server error: " + e.getMessage());
+			Log.LogError(Log.SUBTYPE.TCP_SERVER, "Server closing error: " + e.getMessage());
 		}
 	}
 
@@ -73,77 +81,20 @@ public class TCPServer implements Runnable
 		Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "TCP server starting");
 		while (active)
 		{
-			while (!connected)
+			Socket clientSocket = null;
+			try
 			{
-				try
-				{
-					if (active)
-					{
-						connectionSocket = socket.accept();
-						connected = true;
-						Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "Client connected");
-					}
-				}
-				catch (IOException e)
-				{
-					Log.LogWarning(Log.SUBTYPE.TCP_SERVER, "Connection error: " + e.getMessage());
-					if (Log.DEBUG)
-						e.printStackTrace();
-				}
+				clientSocket = socket.accept();
+				Clients.add(clientSocket);
+				new Thread(new TCPClientWorker(clientSocket)).start();
+				Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "Client connected");
 			}
-			while (connected)
+			catch (IOException e)
 			{
-				try
-				{
-					BufferedReader inFromClient = new BufferedReader(new InputStreamReader(
-							connectionSocket.getInputStream()));
-					String[] data = inFromClient.readLine().split(" ");
-					String extras = null;
-					if (data.length > 1)
-					{
-						StringBuilder strBuilder = new StringBuilder();
-						for (int i = 1; i < Main.FIELD_COUNT + 1; i++)
-						{
-							try
-							{
-								strBuilder.append(data[i] + " ");
-							}
-							catch (Exception e)
-							{
-								Log.LogError(Log.SUBTYPE.DATA_INPUT, "Invalid field count!");
-							}
-						}
-						extras = strBuilder.toString();
-					}
-					data[0] = data[0].toUpperCase();
-					if (data[0].equals("STOP"))
-					{
-						connected = false;
-						connectionSocket.close();
-						Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "Client disconnected");
-					}
-					Main.commandDecoder.decode(CommandDecoder.COMMAND_TYPE.fromString(data[0]),
-							extras);
-				}
-				catch (Exception e)
-				{
-					connected = false;
-					Log.LogEvent(Log.SUBTYPE.TCP_SERVER, "Client disconnected");
-					Log.LogError(Log.SUBTYPE.TCP_SERVER, "Server error: " + e.getMessage());
-					if (Log.DEBUG)
-						e.printStackTrace();
-				}
+				Log.LogWarning(Log.SUBTYPE.TCP_SERVER, "Connection error: " + e.getMessage());
+				if (Log.DEBUG)
+					e.printStackTrace();
 			}
 		}
-	}
-
-	public boolean isConnected()
-	{
-		return connected;
-	}
-
-	public void setConnected(boolean connected)
-	{
-		this.connected = connected;
 	}
 }

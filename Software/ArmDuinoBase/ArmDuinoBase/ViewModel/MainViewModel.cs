@@ -223,7 +223,7 @@ namespace ArmDuinoBase.ViewModel
 							CoreWrapper.Write(input);
 						if (TCPHandler.Connected)
 							TCPHandler.Write(input);
-						Arm.Connected = true;
+						//Arm.Connected = true;
 						Rover.Connected = true;
 						SendTimer.Start();
 						break;
@@ -258,6 +258,16 @@ namespace ArmDuinoBase.ViewModel
 						Arm.Reset();
 						break;
 					}
+				case "MOVE":
+					{
+						if (Arm.Connected && Rover.Connected)
+							WriteMoveCommand("111111111111111");
+						else if (Arm.Connected)
+							WriteMoveCommand("111111100000000");
+						else if (Rover.Connected)
+							WriteMoveCommand("000000011111111");
+						break;
+					}
 				default:
 					{
 						if (CoreWrapper.IsStarted)
@@ -270,6 +280,16 @@ namespace ArmDuinoBase.ViewModel
 			}
 		}
 
+		private void WriteMoveCommand(string active)
+		{
+			if (CoreWrapper.IsStarted)
+				CoreWrapper.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " 
+					+ Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed + " " + active);
+			else if (TCPHandler.Connected)
+				TCPHandler.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " "
+					+ Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed + " " + active);
+		}
+
 		public void StartCOMConnection()
 		{
 			try
@@ -277,7 +297,6 @@ namespace ArmDuinoBase.ViewModel
 				CoreWrapper.InitializeCore(115200, 15, 3, false, 6789, false);
 				CoreWrapper.StartCore();
 				WriteCommand("CONNECT");
-				Arm.Connected = true;
 				SendTimer.Start();
 			}
 			catch (Exception e)
@@ -304,10 +323,7 @@ namespace ArmDuinoBase.ViewModel
 			try
 			{
 				await TCPHandler.Connect(ip, port);
-				if (TCPHandler.Connected)
-					TCPHandler.Write("CONNECT");
-				Arm.Connected = true;
-				Rover.Connected = true;
+				WriteCommand("CONNECT");
 				SendTimer.Start();
 			}
 			catch (Exception e)
@@ -318,12 +334,7 @@ namespace ArmDuinoBase.ViewModel
 
 		void SendTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
-			if (Arm.Connected && Rover.Connected && CoreWrapper.IsStarted)
-				CoreWrapper.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " +
-					+Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
-			else if (Arm.Connected && Rover.Connected && TCPHandler.Connected)
-				TCPHandler.Write("MOVE " + Arm.BaseAng + " " + Arm.Horizontal1Ang + " " + Arm.Vertical1Ang + " " + Arm.Horizontal2Ang + " " + Arm.Vertical2Ang + " " + Arm.Horizontal3Ang + " " + Arm.Gripper + " " +
-					+Rover.FrontLeftAng + " " + Rover.FrontRightAng + " " + Rover.RearLeftAng + " " + Rover.RearRightAng + " " + Rover.FrontLeftSpeed + " " + Rover.FrontRightSpeed + " " + Rover.RearLeftSpeed + " " + Rover.RearRightSpeed);
+			WriteCommand("MOVE");
 		}
 
 		public void Refresh()

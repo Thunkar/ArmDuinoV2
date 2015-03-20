@@ -27,18 +27,24 @@ public class MessageConformer
 	
 	public static char[] getMoveMessage(String data)
 	{
-		char[] finalMessage = new char[Main.FIELD_COUNT*Main.FIELD_SIZE+3];
+		char[] finalMessage = new char[Main.FIELD_COUNT*(Main.FIELD_SIZE+1)+3];
 		String[] stringArray = data.split(" ");
 		finalMessage[0] = SENDCODE;
 		finalMessage[1] = String.valueOf(Main.FIELD_COUNT).toCharArray()[0];
 		finalMessage[2] = String.valueOf(Main.FIELD_SIZE).toCharArray()[0];
+		String activeFlags = stringArray[stringArray.length-1];
 		int dataCounter = 0;
-		for(int i = 0; i < Main.FIELD_COUNT*Main.FIELD_SIZE; i = i + Main.FIELD_SIZE)
+		for(int i = 0; i < Main.FIELD_COUNT*(Main.FIELD_SIZE+1); i = i + Main.FIELD_SIZE+1)
 		{
 			int difference = Main.FIELD_SIZE - stringArray[dataCounter].length();
 			int dataPointer = 0;
-			for(int j = 0; j < Main.FIELD_SIZE; j++)
+			for(int j = 0; j < Main.FIELD_SIZE+1; j++)
 			{
+				if(j == 0)
+				{
+					finalMessage[i + 3] = activeFlags.charAt(dataCounter);
+					continue;
+				}
 				if(difference != 0)
 				{
 					finalMessage[i + 3 + j] = '0';

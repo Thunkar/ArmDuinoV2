@@ -55,7 +55,7 @@ public class CommandInterpreter implements Runnable
 					if(incoming.equals("MOVE"))
 					{
 						StringBuilder strBldr = new StringBuilder();
-						for(int i = 0; i < Main.FIELD_COUNT; i++)
+						for(int i = 0; i < Main.FIELD_COUNT + 1; i++)
 						{
 							strBldr.append(IO.getWord()+" ");
 						}

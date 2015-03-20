@@ -113,7 +113,6 @@ namespace ArmDuinoBase.Model
 				NotifyPropertyChanged("RearRightSpeed");
 			}
 		}
-
 		private bool connected;
 		public bool Connected
 		{
