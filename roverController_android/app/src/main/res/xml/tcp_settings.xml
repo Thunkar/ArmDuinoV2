@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+        android:defaultValue="192.168.1.2"
+        android:inputType="text"
+        android:key="tcp_address"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Address" />
+
+    <EditTextPreference
+        android:defaultValue="3000"
+        android:inputType="number"
+        android:key="tcp_port"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="Port" />
+
+</PreferenceScreen>
