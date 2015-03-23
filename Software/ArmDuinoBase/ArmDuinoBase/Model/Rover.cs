@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace ArmDuinoBase.Model
 {
+	/// <summary>
+	/// Data model for the rover.
+	/// </summary>
 	public class Rover : INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Rover variables declaration
+		/// </summary>
 		private int frontLeftAng;
 		public int FrontLeftAng
 		{
@@ -127,20 +133,17 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
-
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public Rover()
 		{
-			FrontLeftAng = 90;
-			FrontRightAng = 90;
-			RearLeftAng = 90;
-			RearRightAng = 90;
-
-			FrontLeftSpeed = 255;
-			FrontRightSpeed = 255;
-			RearLeftSpeed = 255;
-			RearRightSpeed = 255;
+			Reset();
 		}
 
+		/// <summary>
+		/// Sets the variables to the default positions
+		/// </summary>
 		public void Reset()
 		{
 			FrontLeftAng = 90;
@@ -154,6 +157,9 @@ namespace ArmDuinoBase.Model
 			RearRightSpeed = 255;
 		}
 
+		/// <summary>
+		/// INotifyPropertyChanged implementation for the MVVM pattern
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public void NotifyPropertyChanged(string property)

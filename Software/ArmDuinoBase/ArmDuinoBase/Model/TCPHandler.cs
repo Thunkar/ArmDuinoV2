@@ -13,14 +13,22 @@ using System.Windows.Media.Imaging;
 
 namespace ArmDuinoBase.Model
 {
+
+	/// <summary>
+	/// TCP client implementation. Connects directly to the CLI running remotely
+	/// </summary>
 	public class TCPHandler : INotifyPropertyChanged
 	{
+		/// Main client
 		public TcpClient Client;
+		/// Client network stream
 		public Stream Stream;
+		/// Reads the incoming stream
 		public StreamReader Reader;
+		/// Flushes the incoing stream asynchronously
 		public Thread ReaderThread;
 
-
+		/// Returns wether the client is connected or not
 		private bool connected;
 		public bool Connected
 		{
@@ -35,6 +43,7 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
+		/// Events fired on data received
 		private event TCPIncomingDataEventHandler incomingData;
 		private object incomingDataEventLock = new object();
 		public event TCPIncomingDataEventHandler IncomingData
@@ -56,11 +65,12 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
-		public TCPHandler()
-		{
-		}
-
-
+		/// <summary>
+		/// Connects to the server provided an ip and a port. Starts reading data immediatelly.
+		/// </summary>
+		/// <param name="ip"></param>
+		/// <param name="port"></param>
+		/// <returns></returns>
 		public async Task Connect(string ip, int port)
 		{
 			Client = new TcpClient();
@@ -72,6 +82,9 @@ namespace ArmDuinoBase.Model
 			ReaderThread.Start();
 		}
 
+		/// <summary>
+		/// Gracefully closes the connection
+		/// </summary>
 		public void Close()
 		{
 			Write("RESET");
@@ -82,6 +95,9 @@ namespace ArmDuinoBase.Model
 			Client.Close();
 		}
 
+		/// <summary>
+		/// Blocking method that reads the incoming data and fires event every time that happens. To be used by the reader thread.
+		/// </summary>
 		public void ReadSocket()
 		{
 			while (Connected)
@@ -93,7 +109,11 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
-
+		/// <summary>
+		/// Helper method used to convert strings into bytes using the default encoding (UTF8)
+		/// </summary>
+		/// <param name="str"></param>
+		/// <returns>The byte array representing the string</returns>
 		public byte[] GetBytes(string str)
 		{
 			byte[] bytes = new byte[str.Length * sizeof(char)];
@@ -101,6 +121,10 @@ namespace ArmDuinoBase.Model
 			return bytes;
 		}
 
+		/// <summary>
+		/// Writes data to the socket.
+		/// </summary>
+		/// <param name="input"></param>
 		public void Write(string input)
 		{
 			StreamWriter writer = new StreamWriter(Stream);
@@ -108,6 +132,9 @@ namespace ArmDuinoBase.Model
 			writer.Flush();
 		}
 
+		/// <summary>
+		/// INotifyPropertyChanged implementation for the MVVM pattern
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 		public void NotifyPropertyChanged(string property)
 		{

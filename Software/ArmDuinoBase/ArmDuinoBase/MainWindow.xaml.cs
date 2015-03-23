@@ -18,10 +18,13 @@ using System.Windows.Shapes;
 namespace ArmDuinoBase
 {
     /// <summary>
-    /// Lógica de interacción para MainWindow.xaml
+    /// Interaction logiv for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+		/// <summary>
+		/// Constructor
+		/// </summary>
         public MainWindow()
         {
             InitializeComponent();
@@ -29,29 +32,32 @@ namespace ArmDuinoBase
             this.Closed += MainWindow_Closed;
         }
 
+		/// <summary>
+		/// Closed event handler. Ensures everything is gracefully closed.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void MainWindow_Closed(object sender, EventArgs e)
         {
             MainViewModel.Current.CloseAll();
         }
 
-
-        private void AngleIncrease_Click(object sender, RoutedEventArgs e)
-        {
-            MainViewModel.Current.KinectHandler.Tilt += 5;
-        }
-
-        private void AngleDecrease_Click(object sender, RoutedEventArgs e)
-        {
-            MainViewModel.Current.KinectHandler.Tilt -= 5;
-        }
-
-
+		/// <summary>
+		/// Settings button click handler. Opens the settings popup.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             Settings.IsOpen = true;
             MainViewModel.Current.Refresh();
         }
 
+		/// <summary>
+		/// Connect button click handler. Connects the TCPClient to the specified server and enables the video stream.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void ConnectTCP_Click(object sender, RoutedEventArgs e)
         {
             int port = 0;
@@ -71,6 +77,11 @@ namespace ArmDuinoBase
 
         }
 
+		/// <summary>
+		/// Handles the standard output of the video stream process and shows it in our console
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void CambozolaProcess_OutputDataReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
 		{
 			try
@@ -86,6 +97,11 @@ namespace ArmDuinoBase
 			catch (Exception) { }
 		}
 
+		/// <summary>
+		/// Handles the output stream of the tcp connection and shows it in our console
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="incomingData"></param>
 		void TCPHandler_IncomingData(object source, string incomingData)
         {
             Dispatcher.Invoke(new Action(() =>
@@ -97,6 +113,11 @@ namespace ArmDuinoBase
             }));
         }
 
+		/// <summary>
+		/// Connect button click handler for the COM port.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void ConnectCOM_Click(object sender, RoutedEventArgs e)
         {
             MainViewModel.Current.StartCOMConnection();
@@ -104,6 +125,12 @@ namespace ArmDuinoBase
             Settings.IsOpen = false;
         }
 
+
+		/// <summary>
+		/// Handles the standard input of the CLI java process
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         void CoreProcess_OutputDataReceived(object sender, System.Diagnostics.DataReceivedEventArgs e)
         {
             try
@@ -119,7 +146,13 @@ namespace ArmDuinoBase
             catch (Exception) { }
         }
 
-        private void Send_Click(object sender, RoutedEventArgs e)
+
+		/// <summary>
+		/// Sends whatever is written in the commmand box to the current active connection (COM or TCP)
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		private void Send_Click(object sender, RoutedEventArgs e)
         {
             if (Input.Text != null)
             {
@@ -128,7 +161,13 @@ namespace ArmDuinoBase
             }
         }
 
-        void MainWindow_KeyDown(object sender, KeyEventArgs e)
+
+		/// <summary>
+		/// ends whatever is written in the commmand box to the current active connection (COM or TCP)
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
+		void MainWindow_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter && Input.IsFocused)
             {
@@ -140,6 +179,11 @@ namespace ArmDuinoBase
             }
         }
 
+		/// <summary>
+		/// Handles navigation between tabs
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
         private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             TabItem item = (TabItem)((TabControl)sender).Items[((TabControl)sender).SelectedIndex];
@@ -148,43 +192,12 @@ namespace ArmDuinoBase
             {
                 switch (item.Name)
                 {
-                    case "KinectTab":
-                        {
-                            if (!MainViewModel.Current.KinectHandler.Started)
-                                MainViewModel.Current.StartKinect();
-                            MainViewModel.Current.Arm.ControlledByGestures = true;
-                            MainViewModel.Current.Arm.ControlledByVoice = false;
-                            MainViewModel.Current.Arm.ControlledBySliders = false;
-                            MainViewModel.Current.Arm.ControlledByCommander = false;
-							MainViewModel.Current.Arm.ControlledByGamePad = false;
-							break;
-                        }
                     case "SliderTab":
                         {
                             MainViewModel.Current.Arm.ControlledBySliders = true;
                             MainViewModel.Current.Arm.ControlledByVoice = false;
                             MainViewModel.Current.Arm.ControlledByGestures = false;
                             MainViewModel.Current.Arm.ControlledByCommander = false;
-							MainViewModel.Current.Arm.ControlledByGamePad = false;
-							break;
-                        }
-                    case "VoiceTab":
-                        {
-                            if (!MainViewModel.Current.CommandRecognizer.Initialized)
-                                MainViewModel.Current.StartSpeechRecognition();
-                            MainViewModel.Current.Arm.ControlledBySliders = false;
-                            MainViewModel.Current.Arm.ControlledByVoice = true;
-                            MainViewModel.Current.Arm.ControlledByGestures = false;
-                            MainViewModel.Current.Arm.ControlledByCommander = false;
-							MainViewModel.Current.Arm.ControlledByGamePad = false;
-							break;
-                        }
-                    case "CommanderTab":
-                        {
-                            MainViewModel.Current.Arm.ControlledBySliders = false;
-                            MainViewModel.Current.Arm.ControlledByVoice = false;
-                            MainViewModel.Current.Arm.ControlledByGestures = false;
-                            MainViewModel.Current.Arm.ControlledByCommander = true;
 							MainViewModel.Current.Arm.ControlledByGamePad = false;
 							break;
                         }
@@ -203,16 +216,12 @@ namespace ArmDuinoBase
             }
         }
 
-        private void Save_Click(object sender, RoutedEventArgs e)
-        {
-            MainViewModel.Current.SaveFile();
-        }
 
-        private void Play_Click(object sender, RoutedEventArgs e)
-        {
-            MainViewModel.Current.LoadAndStart(MainViewModel.Current.SelectedCommand);
-        }
-
+		/// <summary>
+		/// Accelerate button click handler. Increments every motor speed at once.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Acc_Click(object sender, RoutedEventArgs e)
 		{
 			MainViewModel.Current.Rover.FrontLeftSpeed++;
@@ -221,6 +230,10 @@ namespace ArmDuinoBase
 			MainViewModel.Current.Rover.RearRightSpeed++;
 		}
 
+		/// Deccelerate button click handler. Reduces every motor speed at once.
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void Dec_Click(object sender, RoutedEventArgs e)
 		{
 			MainViewModel.Current.Rover.FrontLeftSpeed--;
@@ -229,6 +242,11 @@ namespace ArmDuinoBase
 			MainViewModel.Current.Rover.RearRightSpeed--;
 		}
 
+		/// <summary>
+		/// Resets speed values to the defaults
+		/// </summary>
+		/// <param name="sender"></param>
+		/// <param name="e"></param>
 		private void ResetSpeed_Click(object sender, RoutedEventArgs e)
 		{
 			MainViewModel.Current.Rover.FrontLeftSpeed = MainViewModel.Current.Rover.FrontRightSpeed = MainViewModel.Current.Rover.RearLeftSpeed = MainViewModel.Current.Rover.RearRightSpeed = 255;

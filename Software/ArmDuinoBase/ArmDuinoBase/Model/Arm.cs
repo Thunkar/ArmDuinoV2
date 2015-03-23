@@ -7,8 +7,14 @@ using System.Threading.Tasks;
 
 namespace ArmDuinoBase.Model
 {
+	/// <summary>
+	/// Data model for the robotic arm
+	/// </summary>
     public class Arm : INotifyPropertyChanged
     {
+		/// <summary>
+		/// Robotic arm variables declaration
+		/// </summary>
         private int baseang;
         public int BaseAng
         {
@@ -115,7 +121,9 @@ namespace ArmDuinoBase.Model
                 NotifyPropertyChanged("Connected");
             }
         }
-
+		/// <summary>
+		/// Variables used to connect the arm to the different control methods.
+		/// </summary>
         private bool controlledByGestures;
         public bool ControlledByGestures
         {
@@ -200,18 +208,17 @@ namespace ArmDuinoBase.Model
             }
         }
 
-
+		/// <summary>
+		/// Constructor
+		/// </summary>
         public Arm()
         {
-            BaseAng = 90;
-            Horizontal1Ang = 90;
-            Vertical1Ang = 90;
-            Horizontal2Ang = 90;
-            Vertical2Ang = 90;
-            Horizontal3Ang = 90;
-            Gripper = 170;
+			Reset();
         }
 
+		/// <summary>
+		/// Resets the variables to their default values
+		/// </summary>
         public void Reset()
         {
             BaseAng = 90;
@@ -223,6 +230,10 @@ namespace ArmDuinoBase.Model
             Gripper = 170;
         }
 
+
+		/// <summary>
+		/// Ensures that the variables values are within constraints
+		/// </summary>
 		public void Normalize()
 		{
 			if (BaseAng > 180) BaseAng = 180;
@@ -241,8 +252,10 @@ namespace ArmDuinoBase.Model
 			if (Gripper < 110) Gripper = 110;
 		}
 
-
-        public event PropertyChangedEventHandler PropertyChanged;
+		/// <summary>
+		/// INotifyPropertyChanged implementation for the MVVM pattern
+		/// </summary>
+		public event PropertyChangedEventHandler PropertyChanged;
 
         public void NotifyPropertyChanged(string property)
         {
