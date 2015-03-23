@@ -5,7 +5,7 @@ package com.assistantindustries.rovercontroller;
  */
 public class JoystickPosition {
 
-    public static final int CODE_LEFT = 0;
+    public static final int CODE_LEFT = 0; //Codes must be incremental (they are mapped to array positions)
     public static final int CODE_RIGHT = 1;
 
 
@@ -30,6 +30,10 @@ public class JoystickPosition {
         return power;
     }
 
+    /**
+     * Method to obtain if the direction is left, right, forward or backward
+     * @return An enum instance indicating the direction
+     */
     public JoystickDirection getJoystickDirection() {
         int angle = 90 - this.angle;
         if (angle >= 315 || angle < 45) {

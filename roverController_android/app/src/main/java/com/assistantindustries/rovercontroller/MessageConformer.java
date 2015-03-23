@@ -1,5 +1,9 @@
 package com.assistantindustries.rovercontroller;
 
+
+/**
+ * This class formats standard messages to the Arduino firmware messages. This will be used for direct bluetooth communication
+ */
 public class MessageConformer {
 
     public static final char STATUSCODE = 'S';

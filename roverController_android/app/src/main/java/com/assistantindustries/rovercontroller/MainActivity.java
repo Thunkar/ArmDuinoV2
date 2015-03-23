@@ -13,9 +13,13 @@ import static com.assistantindustries.rovercontroller.JoystickPosition.CODE_RIGH
 
 
 public class MainActivity extends ActionBarActivity {
-    private static final int SETTINGS_REQUEST = 0;
+
+    private static final int SETTINGS_REQUEST = 0; //Code for settings intent
+
+    //Joysticks
     private JoystickView leftJoystick;
     private JoystickView rightJoystick;
+
     private CommandSender commandSender;
 
     @Override
@@ -58,7 +62,7 @@ public class MainActivity extends ActionBarActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //if settings button clicked, go to settings activity
         if (id == R.id.action_settings) {
             startActivityForResult(new Intent(this, SettingsActivity.class), SETTINGS_REQUEST);
             return true;
@@ -72,7 +76,7 @@ public class MainActivity extends ActionBarActivity {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
             case SETTINGS_REQUEST:
-                //S this.commandSender.restartSenderThread();
+                this.commandSender.update();
                 break;
         }
     }

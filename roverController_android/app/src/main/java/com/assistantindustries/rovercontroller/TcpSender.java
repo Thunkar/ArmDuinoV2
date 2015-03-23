@@ -17,17 +17,19 @@ import static com.assistantindustries.rovercontroller.JoystickPosition.CODE_RIGH
 
 /**
  * Created by Asistant on 16/03/2015.
+ * This class is a command sender that works over TCP sending commands to the CLI running in a server.
+ * It uses the tcp address and port preferences.
  */
 public class TcpSender extends AbstractCommandSender {
 
-    private static final String ENABLED_SERVO_STRING = "000000011111111";
+    private static final String ENABLED_SERVO_STRING = "000000011111111"; //This string is appended to the message and indicates which servos are enabled.
     private SendThread sendThread;
-    private Context ctx;
+    private Context ctx; //context is used to get application preferences
 
     public TcpSender(Context ctx) {
         super();
         this.ctx = ctx;
-        initSenderThread();
+        initSenderThread(); // On initialization, init sender thread
     }
 
     private void initSenderThread() {
@@ -45,10 +47,11 @@ public class TcpSender extends AbstractCommandSender {
         return Integer.parseInt(prefs.getString("tcp_port", "3000"));
     }
 
+    //See abstract command sender javadoc
     @Override
     public void updatePosition(int code, int angle, int power, int direction) {
-        this.positions[code] = new JoystickPosition(angle, power);
-        sendPositions();
+        this.positions[code] = new JoystickPosition(angle, power); //update joystick position
+        sendPositions(); //send to CLI
     }
 
     @Override
@@ -56,6 +59,10 @@ public class TcpSender extends AbstractCommandSender {
         this.sendThread.getHandler().sendEmptyMessage(QUIT_CONNECTION);
     }
 
+    /**
+     * method used to send a cli formatted command through sender thread
+     * @param command the command in raw string
+     */
     private void sendCommand(String command) {
         Handler handler = sendThread.getHandler();
         if (handler != null) {
@@ -65,6 +72,10 @@ public class TcpSender extends AbstractCommandSender {
         }
     }
 
+    /**
+     * This method formats data to a cli-compliant string
+     * @return A string that can be sended to CLI
+     */
     private String buildPositionsString() {
         StringBuilder sb = new StringBuilder();
         sb.append("MOVE");
@@ -107,7 +118,7 @@ public class TcpSender extends AbstractCommandSender {
                 break;
         }
         sb.append(ENABLED_SERVO_STRING);
-        String join = sb.toString().replace("  ", " ");
+        String join = sb.toString().replace("  ", " "); //Remove double whitespaces
         Log.d("Rover", join);
         return join;
     }
@@ -122,6 +133,9 @@ public class TcpSender extends AbstractCommandSender {
         updateSocket();
     }
 
+    /**
+     * Sends an update command to the sender thread
+     */
     private void updateSocket() {
         Message msg = sendThread.getHandler().obtainMessage(UPDATE_SOCKET);
         msg.getData().putString(CODE_ADDRESS, getTcpAddress());
@@ -129,7 +143,9 @@ public class TcpSender extends AbstractCommandSender {
         sendThread.getHandler().sendMessage(msg);
     }
 
-
+    /**
+     * This class is a thread that accepts orders from the ui thread
+     */
     private class SendThread extends Thread {
 
         private Handler handler;
@@ -157,7 +173,7 @@ public class TcpSender extends AbstractCommandSender {
             try {
                 socket = new Socket(address, port);
                 out = new PrintWriter(socket.getOutputStream(), true);
-                out.println(CONNECT_COMMAND);
+                out.println(CONNECT_COMMAND); //First sends the connect command to the CLI
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -166,13 +182,13 @@ public class TcpSender extends AbstractCommandSender {
                 public void handleMessage(Message msg) {
                     super.handleMessage(msg);
                     switch (msg.what) {
-                        case SEND_COMMAND:
+                        case SEND_COMMAND: //Sends a command directly to the CLI
                             if (out != null) {
                                 String command = msg.getData().getString(COMMAND_KEY);
                                 out.println(command);
                             }
                             break;
-                        case QUIT_CONNECTION:
+                        case QUIT_CONNECTION: //Gently destroys connection
                             if (out != null) {
                                 out.println(CLOSE_COMMAND);
                             }
@@ -185,7 +201,7 @@ public class TcpSender extends AbstractCommandSender {
                             }
 
                             break;
-                        case UPDATE_SOCKET:
+                        case UPDATE_SOCKET: //Closes sockets and opens it again
                             String newAddress = msg.getData().getString(CODE_ADDRESS);
                             int newPort = msg.getData().getInt(CODE_PORT);
                             if (!address.equals(newAddress) || newPort != newPort)
