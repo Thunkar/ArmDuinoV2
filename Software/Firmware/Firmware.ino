@@ -1,4 +1,4 @@
-#include <SoftPWM.h>
+#include <SoftPWM.h> //Soft pwm is used to control motors in analog outputs
 #include <SoftPWM_timer.h>
 #include <Servo.h>
 
@@ -6,7 +6,7 @@ const int FIELD_COUNT = 15;
 const int FIELD_SIZE = 4;
 const int SERVO_COUNT=11;
 
-typedef struct motor{
+typedef struct motor{ //Describes motor values. In H-Bridges, two analog outputs are used, one for forward power and other for backward power.
   int forward;
   int backward;
 } Motor;
@@ -19,14 +19,14 @@ Servo horizontal2;
 Servo vertical2;
 Servo horizontal3;
 Servo gripper;
-Servo flAngle;
-Servo frAngle;
-Servo blAngle;
-Servo brAngle;
-Motor flSpeed;
-Motor frSpeed;
-Motor blSpeed;
-Motor brSpeed;
+Servo flAngle; //Front left rotation
+Servo frAngle; //Front right rotation
+Servo blAngle; //Back left rotation
+Servo brAngle; //Back right rotation
+Motor flSpeed; //Front left speed
+Motor frSpeed; //Front right speed
+Motor blSpeed; //Back left speed
+Motor brSpeed; //Back right speed
 //Servo array
 Servo servos[] = {base, horizontal1, vertical1, horizontal2, vertical2, horizontal3, gripper, flAngle,frAngle,blAngle,brAngle  };
 Motor motors[] = {flSpeed,frSpeed,blSpeed,brSpeed};
@@ -46,10 +46,10 @@ long movementPeriod = 100000;
 
 int incomingByte;
 int readCounter;
-char buffer[FIELD_COUNT*FIELD_SIZE+3];
-int data[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0};
-int multiplier[] = {1, 10, 100, 1000, 10000};
-boolean reading;
+char buffer[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data
+int data[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0}; //Processed servo data
+int multiplier[] = {1, 10, 100, 1000, 10000}; // Array of multiples of ten to be able to process data efficiently
+boolean reading; 
 
 boolean robotConnected;
 
@@ -101,13 +101,13 @@ void setTargets(int data[]){
   targets[14] = data[14];
   for(int i = 0; i < FIELD_COUNT; i++)
   {
-    int difference = abs(positions[i]-targets[i]);
+    int difference = abs(positions[i]-targets[i]); //Gets the difference between desired positions and current positions
     if(difference == 0){
       movementStatus[i] = true;
     }
     else{
       movementStatus[i] = false;
-      stepTimer[i] = movementPeriod/difference;
+      stepTimer[i] = movementPeriod/difference; //Defines the timestep
     }
   }
 }
@@ -123,16 +123,16 @@ void moveStep(int servo, int target){
   {
     if(positions[servo]<target){
       positions[servo] += 1;
-      if(servo<SERVO_COUNT){
-        servos[servo].write(positions[servo]);
-      }else{
-        if(positions[servo]>255){
+      if(servo<SERVO_COUNT){ //If we have to move a servo
+        servos[servo].write(positions[servo]); //Use the servo library
+      }else{ //Else, use softpwm
+        if(positions[servo]>255){ //Since motors can go backward and forward, numbers greater than than 255 mean forward power
           SoftPWMSet(motors[servo-SERVO_COUNT].forward,positions[servo]-256);
         }else{
-          SoftPWMSet(motors[servo-SERVO_COUNT].backward,positions[servo]);
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,positions[servo]); //And viceversa.
         }
       }
-      lastSteps[servo] = micros();
+      lastSteps[servo] = micros(); //Update last step
     }
     else{
       positions[servo] -= 1;
@@ -204,9 +204,9 @@ void moveStuff()
 
 void clearData()
 {
-  for(int i = 0; i < FIELD_COUNT; i++)
+  for(int i = 0; i < FIELD_COUNT; i++) //Clears all data
   {
-    data[i] = 0;
+    data[i] = 0; 
   }
 }
 
@@ -220,17 +220,16 @@ void processMovementData()
     return;
   }
   int counter = 0;
- // clearData();
-  for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE)
+  for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE) //Iterates over all data caring about initial chars and steps
   {
-    if((int)buffer[i]-0x30==1){ //IF the first number of the  field is zero, don't modify current data 
-      data[counter]=0;    
-      for(int j = 1; j < FIELD_SIZE; j ++)
+    if((int)buffer[i]-0x30==1){ //IF the first number of the  field is zero, don't modify current data (disabled servo/motor)
+      data[counter]=0;    //Clear last data
+      for(int j = 1; j < FIELD_SIZE; j ++) //convert a secuence of numbers to an integer
       {
         data[counter] += ((int)buffer[i+j]-0x30)*multiplier[FIELD_SIZE - j-1];
       }
     }
-    counter++;
+    counter++; //move to next data
   }
 }
 
@@ -312,17 +311,17 @@ void reset()
 
 void readData()
 {
-    incomingByte = Serial.read();
+  incomingByte = Serial.read(); //Read byte
   if(incomingByte != -1) 
   {
     if(!reading)
     {
-      if((char)incomingByte =='&')
+      if((char)incomingByte =='&')//Open code
       {
         reading = true;
       }
     }
-    else if((char)incomingByte == '%')
+    else if((char)incomingByte == '%')//Close code
     {
       reading = false;
       dumpInputBuffer();
