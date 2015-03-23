@@ -12,6 +12,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 
+/**
+ * Class that handles the serial port connection and communication
+ * @author Gregorio
+ *
+ */
 public class ProtocolManager implements SerialPortEventListener
 {
 
@@ -20,6 +25,11 @@ public class ProtocolManager implements SerialPortEventListener
 	private OutputStream output;
 	private InputStream input;
 
+	/**
+	 * Initializes the serial port connection according to the provided port name and baud rate.
+	 * @param port
+	 * @param baudRate
+	 */
 	public ProtocolManager(String port, String baudRate)
 	{
 		try
@@ -43,6 +53,11 @@ public class ProtocolManager implements SerialPortEventListener
 		}
 	}
 
+	
+	/*
+	 * Serial event data received event handler.
+	 * @see gnu.io.SerialPortEventListener#serialEvent(gnu.io.SerialPortEvent)
+	 */
 	@Override
 	public synchronized void serialEvent(SerialPortEvent event)
 	{
@@ -54,6 +69,9 @@ public class ProtocolManager implements SerialPortEventListener
 		}
 	}
 
+	/**
+	 * Reads the serial port and logs the incoming data.
+	 */
 	private void readPort()
 	{
 		try
@@ -78,6 +96,11 @@ public class ProtocolManager implements SerialPortEventListener
 		}
 	}
 
+	
+	/**
+	 * Writes a message to the serial port.
+	 * @param message in raw bytes
+	 */
 	public void write(char[] message)
 	{
 		try
@@ -98,6 +121,10 @@ public class ProtocolManager implements SerialPortEventListener
 		}
 	}
 	
+	
+	/**
+	 * Helper method that shuts down the serial port input
+	 */
 	public void closeInput()
 	{
 		try
@@ -112,6 +139,9 @@ public class ProtocolManager implements SerialPortEventListener
 		}		
 	}
 	
+	/**
+	 * Helper method that shuts down the serial port output
+	 */
 	public void closeOutput()
 	{
 		try

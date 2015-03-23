@@ -8,6 +8,9 @@ public class CommandSender implements Runnable
 {
 	
 	private boolean active = true;
+	/**
+	 * Thread-safe queue shared with the decoder. Every command stored here is set to be sent to the robot
+	 */
 	private LinkedBlockingQueue<char[]> commandsToSend;
 	private ProtocolManager protocol;
 	
@@ -28,6 +31,10 @@ public class CommandSender implements Runnable
 		this.active = active;
 	}
 
+	/* 
+	 * Implementation of the run method that checks if there are commands to send. If it is the case, it sends them to the protocol manager (FIFO).
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run()
 	{

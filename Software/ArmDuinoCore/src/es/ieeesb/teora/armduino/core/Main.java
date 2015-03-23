@@ -1,10 +1,10 @@
 package es.ieeesb.teora.armduino.core;
 
 
-import java.lang.reflect.Field;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import es.ieeesb.teora.armduino.util.*;
+import es.ieeesb.teora.armduino.util.Kattio;
+import es.ieeesb.teora.armduino.util.Log;
 
 public class Main
 {
@@ -29,11 +29,6 @@ public class Main
 	{
 		try
 		{
-//			Field fieldSysPath = ClassLoader.class.getDeclaredField( "sys_paths" );
-//			fieldSysPath.setAccessible( true );
-//			fieldSysPath.set( null, null );
-//			String libPath = System.getProperty("user.dir") + "/lib/";
-//			System.setProperty("java.library.path", libPath );
 			PORT = args[0];
 			BAUD_RATE = args[1];	
 			FIELD_COUNT = Integer.parseInt(args[2]);

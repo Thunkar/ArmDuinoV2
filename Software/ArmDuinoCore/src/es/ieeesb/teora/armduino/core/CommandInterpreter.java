@@ -4,10 +4,19 @@ import es.ieeesb.teora.armduino.util.Kattio;
 import es.ieeesb.teora.armduino.util.Log;
 
 
+/**
+ * Runnable that takes the commands from the connected input and prepares them before passing them to the decoder
+ * @author Gregorio
+ *
+ */
 public class CommandInterpreter implements Runnable
 {
 
+	/**
+	 * Kattio input/output handler
+	 */
 	private Kattio IO;
+	
 	private boolean active = true;
 	
 	public boolean isActive()
@@ -26,6 +35,10 @@ public class CommandInterpreter implements Runnable
 	}
 
 	
+	/**
+	 * Constructor
+	 * @param IO
+	 */
 	public CommandInterpreter(Kattio IO)
 	{
 		this.IO = IO;
@@ -34,6 +47,10 @@ public class CommandInterpreter implements Runnable
 	
 	
 
+	/* 
+	 * Implementation of the run method. While active, it takes the commands from the connected input and packages them. Afterwards, they are sent to the decoder.
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run()
 	{

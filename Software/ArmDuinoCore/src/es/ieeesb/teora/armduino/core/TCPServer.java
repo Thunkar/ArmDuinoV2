@@ -8,6 +8,11 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import es.ieeesb.teora.armduino.util.Log;
 
+/**
+ * Simple TCP server used to control the robot remotely. Allows multiple and concurrent clients.
+ * @author Gregorio
+ *
+ */
 public class TCPServer implements Runnable
 {
 	private ServerSocket socket;
@@ -37,6 +42,10 @@ public class TCPServer implements Runnable
 		}
 	}
 
+	/**
+	 * Writes data to all clients, checking if they're still alive.
+	 * @param data
+	 */
 	public static void write(String data)
 	{
 		for (Socket client : Clients)
@@ -62,6 +71,9 @@ public class TCPServer implements Runnable
 
 	}
 
+	/**
+	 * Closes the server
+	 */
 	public void close()
 	{
 		try
@@ -75,6 +87,10 @@ public class TCPServer implements Runnable
 		}
 	}
 
+	/* 
+	 * Implementation of the run method that listens for connections and launches a worker thread for each client.
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run()
 	{

@@ -6,15 +6,23 @@ import java.net.Socket;
 
 import es.ieeesb.teora.armduino.util.Log;
 
+/**
+ * Represents a client connected to the TCP server and manages its lifecycle
+ * @author Gregorio
+ *
+ */
 public class TCPClientWorker implements Runnable
 {
 	private Socket clientSocket;
-
 	public TCPClientWorker(Socket clientSocket)
 	{
 		this.clientSocket = clientSocket;
 	}
 
+	/* 
+	 * Implementation of the run method that handles client communication and connection/disconnection. 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run()
 	{

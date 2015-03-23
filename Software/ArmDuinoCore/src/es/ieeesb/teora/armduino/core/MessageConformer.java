@@ -8,6 +8,10 @@ public class MessageConformer
 	public static final char SENDCODE = 'M';
 	public static final char RESETCODE = 'R';
 	
+	/**
+	 * Transforms a status request into a status message
+	 * @return the status message according to the protocol
+	 */
 	public static char[] getStatusRequest()
 	{
 		char[] statusRequest = {STATUSCODE};
@@ -15,6 +19,11 @@ public class MessageConformer
 	}
 
 	
+	/**
+	 * Takes a message and adds the start and finish control characters
+	 * @param message
+	 * @return
+	 */
 	public static char[] finishMessage(char[] message)
 	{
 		char[] finalMessage = new char[message.length + 2];
@@ -25,6 +34,12 @@ public class MessageConformer
 	}
 	
 	
+	/**
+	 * This is where the magic happens. This method takes a move message as an input (MOVE field field field.... activeflags) and formats it according to the protocol, using the input arguments 
+	 * FIELD_SIZE and FIELD_COUNT.
+	 * @param movement data
+	 * @return formatted move message
+	 */
 	public static char[] getMoveMessage(String data)
 	{
 		char[] finalMessage = new char[Main.FIELD_COUNT*(Main.FIELD_SIZE+1)+3];
@@ -61,14 +76,20 @@ public class MessageConformer
 		return finishMessage(finalMessage);
 	}
 
-
+	/**
+	 * Transforms a connect request into a connect message
+	 * @return the connect message according to the protocol
+	 */
 	public static char[] getConnectRequest()
 	{
 		char[] statusRequest = {CONNECTCODE};
 		return finishMessage(statusRequest);
 	}
 
-
+	/**
+	 * Transforms a reset request into a reset message
+	 * @return the reset message according to the protocol
+	 */
 	public static char[] getResetRequest()
 	{
 		char[] statusRequest = {RESETCODE};

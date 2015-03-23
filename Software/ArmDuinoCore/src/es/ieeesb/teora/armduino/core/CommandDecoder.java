@@ -7,13 +7,25 @@ import es.ieeesb.teora.armduino.util.Log;
 public class CommandDecoder
 {
 	
+	/**
+	 * Thread-safe queue that holds the commands that have not been sent yet
+	 */
 	private LinkedBlockingQueue<char[]> commandQueue;
 	
+	/** 
+	 * Constructor
+	 * @param commandQueue
+	 */
 	public CommandDecoder(LinkedBlockingQueue<char[]> commandQueue)
 	{
 		this.commandQueue = commandQueue;
 	}
 	
+	/**
+	 * Describes the different supported commands types.
+	 * @author Gregorio
+	 *
+	 */
 	public enum COMMAND_TYPE 
 	{ 
 		STATUS, MOVE, CONNECT, RESET, INVALID, STOP, QUEUE; 
@@ -41,6 +53,12 @@ public class CommandDecoder
 		
 	}
 	
+	/**
+	 * Takes a command and calls the message conformer in order to put it into the send queue
+	 * @param command
+	 * @param extra
+	 * @throws InterruptedException
+	 */
 	public synchronized void decode(COMMAND_TYPE command, String extra) throws InterruptedException
 	{
 		switch(command)
