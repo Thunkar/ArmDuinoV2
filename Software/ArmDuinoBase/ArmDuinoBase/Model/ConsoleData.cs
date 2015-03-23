@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ArmDuinoBase.Model
 {
+	/// <summary>
+	/// Incoming data model
+	/// </summary>
     public class ConsoleData
     {
         public string Data { get; set; }

@@ -11,8 +11,14 @@ using System.Windows;
 
 namespace ArmDuinoBase.Model
 {
+	/// <summary>
+	/// Wrapper around the cambozola instance that serves the video feed
+	/// </summary>
 	public class WebcamWrapper : INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Variable declaration
+		/// </summary>
 		public Process CambozolaProcess { get; set; }
 		private bool isStarted;
 		public bool IsStarted
@@ -28,12 +34,19 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
-
+		/// <summary>
+		/// Constructor
+		/// </summary>
 		public WebcamWrapper()
 		{
 			IsStarted = false;
 		}
 
+		/// <summary>
+		/// Initializes the cambozola process with the apropriate arguments in order to connect to the video server
+		/// </summary>
+		/// <param name="ip"></param>
+		/// <param name="videoport"></param>
 		public void InitializeFeed(string ip, string videoport)
 		{
 			CambozolaProcess = new Process();
@@ -52,6 +65,10 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
+		/// <summary>
+		/// Returns the java installation path in order to initialize the cambozola process successfully
+		/// </summary>
+		/// <returns></returns>
 		private string GetJavaInstallationPath()
 		{
 			string environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
@@ -71,11 +88,19 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
+		/// <summary>
+		/// Write to cambozola's process standard input
+		/// </summary>
+		/// <param name="input"></param>
 		public void Write(string input)
 		{
 			CambozolaProcess.StandardInput.WriteLine(input);
 		}
 
+
+		/// <summary>
+		/// Starts the process and enables reading from its standard input
+		/// </summary>
 		public void StartCambozola()
 		{
 			CambozolaProcess.Start();
@@ -83,6 +108,10 @@ namespace ArmDuinoBase.Model
 			CambozolaProcess.BeginOutputReadLine();
 		}
 
+
+		/// <summary>
+		/// Gracefully stops the process and shuts down the video feed
+		/// </summary>
 		public void StopWebcam()
 		{
 			try
@@ -96,6 +125,9 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
+		/// <summary>
+		/// INotifyPropertyChanged implementation for the MVVM pattern
+		/// </summary>
 		public event PropertyChangedEventHandler PropertyChanged;
 
 		public void NotifyPropertyChanged(string property)

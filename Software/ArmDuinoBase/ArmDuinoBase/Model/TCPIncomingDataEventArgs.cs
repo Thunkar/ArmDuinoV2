@@ -8,7 +8,9 @@ namespace ArmDuinoBase.Model
 {
     public delegate void TCPIncomingDataEventHandler(object source, string incomingData);
 
-
+	/// <summary>
+	/// Helper class used for TCP data incoming event handling
+	/// </summary>
     public class TCPIncomingDataEventArgs : EventArgs
     {
         private string EventInfo;

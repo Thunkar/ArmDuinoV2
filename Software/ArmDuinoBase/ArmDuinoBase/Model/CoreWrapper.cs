@@ -11,8 +11,14 @@ using System.Windows;
 
 namespace ArmDuinoBase.Model
 {
+	/// <summary>
+	/// Wrapper around the CLI. Handles the initialization of the java process and all its lifecycle.
+	/// </summary>
 	public class CoreWrapper : INotifyPropertyChanged
 	{
+		/// <summary>
+		/// Variable declaration
+		/// </summary>
 		public Process CoreProcess { get; set; }
 		private bool isStarted;
 		public bool IsStarted
@@ -46,6 +52,15 @@ namespace ArmDuinoBase.Model
 			IsStarted = false;
 		}
 
+		/// <summary>
+		/// Launches the java process wiht the proper arguments specified by the user
+		/// </summary>
+		/// <param name="speed"></param>
+		/// <param name="segments"></param>
+		/// <param name="fields"></param>
+		/// <param name="server"></param>
+		/// <param name="port"></param>
+		/// <param name="debug"></param>
 		public void InitializeCore(long speed, int segments, int fields, bool server, int port, bool debug)
 		{
 			CoreProcess = new Process();
@@ -54,7 +69,6 @@ namespace ArmDuinoBase.Model
 			string javaPath = GetJavaInstallationPath();
 			if (!string.IsNullOrEmpty(javaPath))
 			{
-
 				var startInfo = new ProcessStartInfo(javaPath + "\\java.exe", starter);
 				startInfo.WorkingDirectory = currentDir + "\\ArmDuinoCore";
 				startInfo.RedirectStandardInput = startInfo.RedirectStandardOutput = true;
@@ -65,6 +79,10 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
+		/// <summary>
+		/// Retrieves the java installation path in order to successfully launch the CLI
+		/// </summary>
+		/// <returns></returns>
 		private string GetJavaInstallationPath()
 		{
 			string environmentPath = Environment.GetEnvironmentVariable("JAVA_HOME");
@@ -84,11 +102,18 @@ namespace ArmDuinoBase.Model
 			}
 		}
 
+		/// <summary>
+		/// Writes to the standard input of the CLI
+		/// </summary>
+		/// <param name="input"></param>
 		public void Write(string input)
 		{
 			CoreProcess.StandardInput.WriteLine(input);
 		}
 
+		/// <summary>
+		/// Starts the CLI and sets reading from the standard input
+		/// </summary>
 		public void StartCore()
 		{
 			CoreProcess.Start();
@@ -96,6 +121,9 @@ namespace ArmDuinoBase.Model
 			CoreProcess.BeginOutputReadLine();
 		}
 
+		/// <summary>
+		/// Gracefully stops the CLI
+		/// </summary>
 		public void StopCore()
 		{
 			try
@@ -113,6 +141,10 @@ namespace ArmDuinoBase.Model
 
 		public event PropertyChangedEventHandler PropertyChanged;
 
+
+		/// <summary>
+		/// INotifyPropertyChanged implementation for the MVVM pattern
+		/// </summary>
 		public void NotifyPropertyChanged(string property)
 		{
 			if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs(property));
