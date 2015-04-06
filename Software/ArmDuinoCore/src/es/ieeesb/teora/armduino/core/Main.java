@@ -25,6 +25,10 @@ public class Main
 	private static Thread serverThread;
 	
 
+	/**
+	 * Main method. Parses the arguments and initializes all the worker threads in the correct order.
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		try
@@ -64,6 +68,9 @@ public class Main
 		commandSenderThread.start();
 	}
 	
+	/**
+	 * Stops everything and shuts the CLI down.
+	 */
 	public static void stop()
 	{
 		Log.LogEvent(Log.SUBTYPE.SYSTEM, "Shutting down");

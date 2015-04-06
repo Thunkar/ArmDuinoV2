@@ -55,8 +55,11 @@ boolean robotConnected;
 
 void sendStatus()
 {
-  if(!robotConnected)
+  if(!robotConnected) 
+  {
     Serial.println("STATUS: IDLE");
+    Serial1.println("STATUS: IDLE");
+  }
   else
   {
     Serial.print("STATUS: CONNECTED. FIELD_COUNT: ");
@@ -77,6 +80,24 @@ void sendStatus()
       Serial.print(" ");
     }
     Serial.println("AWAITING COMMANDS");
+    Serial1.print("STATUS: CONNECTED. FIELD_COUNT: ");
+    Serial1.print(FIELD_COUNT); 
+    Serial1.print(" FIELD_SIZE: ");
+    Serial1.print(FIELD_SIZE);
+    Serial1.print(" POSITIONS: ");
+    for(int i = 0; i < FIELD_COUNT; i++)
+    {
+      Serial1.print(data[i]);
+      Serial1.print(" ");
+    }
+    
+    Serial1.print(" DATA: ");
+    for(int i = 0; i < FIELD_COUNT; i++)
+    {
+      Serial1.print(data[i]);
+      Serial1.print(" ");
+    }
+    Serial1.println("AWAITING COMMANDS");
   }
 }
 
@@ -217,6 +238,7 @@ void processMovementData()
   if(!robotConnected)
   {
     Serial.println("Robot not connected!");
+    Serial1.println("Robot not connected!");
     return;
   }
   int counter = 0;
@@ -249,11 +271,13 @@ void dumpInputBuffer()
       gripper.write(90);
       delay(200);
       gripper.write(170);
+      Serial1.println("Connected");
       Serial.println("Connected");
       return;
     case 'R':
       robotConnected = false;
       reset();
+      Serial1.println("Disconnected");
       Serial.println("Disconnected");
       return;
     case 'S':
@@ -309,11 +333,41 @@ void reset()
     gripper.write(170);
 }
 
-void readData()
+void readSerialData()
 {
   incomingByte = Serial.read(); //Read byte
   if(incomingByte != -1) 
   {
+    Serial1.write((char)incomingByte);
+    Serial.write((char)incomingByte);
+    if(!reading)
+    {
+      if((char)incomingByte =='&')//Open code
+      {
+        reading = true;
+      }
+    }
+    else if((char)incomingByte == '%')//Close code
+    {
+      reading = false;
+      dumpInputBuffer();
+      readCounter = 0;
+    }
+    else
+    {
+      buffer[readCounter] = (char)incomingByte;
+      readCounter++;
+    }
+  }
+}
+
+void readSerial1Data()
+{
+  incomingByte = Serial1.read(); //Read byte
+  if(incomingByte != -1) 
+  {
+    Serial1.write((char)incomingByte);
+    Serial.write((char)incomingByte);
     if(!reading)
     {
       if((char)incomingByte =='&')//Open code
@@ -336,8 +390,10 @@ void readData()
 }
 
 
+
 void setup()
 {
+    delay(5000);
     pinMode(13, OUTPUT);
     digitalWrite(13, HIGH); //LED on means the arm is not connected
     gripper.attach(6);
@@ -377,12 +433,14 @@ void setup()
     delay(200);
     gripper.write(170);
     Serial.begin(115200);
-     SoftPWMBegin();
+    Serial1.begin(38400);
+    SoftPWMBegin();
 }
 
 
 void loop()
 {
-  readData();
+  readSerialData();
+  readSerial1Data();
   moveStuff();
 }

@@ -104,7 +104,14 @@ namespace ArmDuinoBase.Model
 			{
 				if (Client != null && Client.Available > 0)
 				{
-					incomingData(this, Reader.ReadLine());
+					try
+					{
+						incomingData(this, Reader.ReadLine());
+					}
+					catch (Exception e)
+					{
+						Close();
+					}
 				}
 			}
 		}
@@ -128,8 +135,16 @@ namespace ArmDuinoBase.Model
 		public void Write(string input)
 		{
 			StreamWriter writer = new StreamWriter(Stream);
-			writer.WriteLine(input);
-			writer.Flush();
+			try
+			{
+				writer.WriteLine(input);
+				writer.Flush();
+			}
+			catch (Exception e)
+			{
+				incomingData(this, e.Message);
+				Close();
+			}
 		}
 
 		/// <summary>

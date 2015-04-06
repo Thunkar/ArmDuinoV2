@@ -6,7 +6,6 @@
         Title="ArmDuinoBase" Height="768" Width="1366">
 	<Window.Resources>
 		<vm:MainViewModel x:Key="MainViewModel"/>
-		<converters:KinectCoordinatesConverter x:Key="KinectCoordinatesConverter"/>
 		<converters:BooleanToColorConverter x:Key="BooleanToColorConverter"/>
 		<converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
 		<converters:TextToIntConverter x:Key="TextToIntConverter"/>
