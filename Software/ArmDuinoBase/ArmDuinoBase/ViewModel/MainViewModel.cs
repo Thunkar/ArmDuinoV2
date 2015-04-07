@@ -138,7 +138,7 @@ namespace ArmDuinoBase.ViewModel
 						if (TCPHandler.Connected)
 							TCPHandler.Write(input);
 						Arm.Connected = true;
-						Rover.Connected = true;
+						//Rover.Connected = true;
 						SendTimer.Start();
 						break;
 					}

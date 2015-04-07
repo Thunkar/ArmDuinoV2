@@ -224,10 +224,10 @@ namespace ArmDuinoBase
 		/// <param name="e"></param>
 		private void Acc_Click(object sender, RoutedEventArgs e)
 		{
-			MainViewModel.Current.Rover.FrontLeftSpeed++;
-			MainViewModel.Current.Rover.FrontRightSpeed++;
-			MainViewModel.Current.Rover.RearLeftSpeed++;
-			MainViewModel.Current.Rover.RearRightSpeed++;
+			MainViewModel.Current.Rover.FrontLeftSpeed += 20;
+			MainViewModel.Current.Rover.FrontRightSpeed += 20;
+			MainViewModel.Current.Rover.RearLeftSpeed += 20;
+			MainViewModel.Current.Rover.RearRightSpeed += 20;
 		}
 
 		/// Deccelerate button click handler. Reduces every motor speed at once.
@@ -236,10 +236,10 @@ namespace ArmDuinoBase
 		/// <param name="e"></param>
 		private void Dec_Click(object sender, RoutedEventArgs e)
 		{
-			MainViewModel.Current.Rover.FrontLeftSpeed--;
-			MainViewModel.Current.Rover.FrontRightSpeed--;
-			MainViewModel.Current.Rover.RearLeftSpeed--;
-			MainViewModel.Current.Rover.RearRightSpeed--;
+			MainViewModel.Current.Rover.FrontLeftSpeed -= 20;
+			MainViewModel.Current.Rover.FrontRightSpeed -= 20;
+			MainViewModel.Current.Rover.RearLeftSpeed -= 20;
+			MainViewModel.Current.Rover.RearRightSpeed -= 20;
 		}
 
 		/// <summary>
