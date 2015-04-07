@@ -265,7 +265,6 @@ void dumpInputBuffer()
       return;
     case 'C':
       robotConnected = true;
-      digitalWrite(13, LOW);
       gripper.write(170);
       delay(200);
       gripper.write(90);
@@ -294,7 +293,6 @@ void dumpInputBuffer()
 
 void reset()
 {
-    digitalWrite(13, HIGH);
     for(int i = 0; i < FIELD_COUNT; i++) 
     {
       positions[i] = 90;
@@ -394,8 +392,6 @@ void readSerial1Data()
 void setup()
 {
     delay(5000);
-    pinMode(13, OUTPUT);
-    digitalWrite(13, HIGH); //LED on means the arm is not connected
     gripper.attach(6);
     gripper.write(170);
     delay(500);
