@@ -157,6 +157,26 @@ namespace ArmDuinoBase.Model
 			RearRightSpeed = 255;
 		}
 
+		public void Normalize()
+		{
+			if (FrontLeftAng > 180) FrontLeftAng = 180;
+			if (FrontLeftAng < 0) FrontLeftAng = 0;
+			if (FrontRightAng > 180) FrontRightAng = 180;
+			if (FrontRightAng < 0) FrontRightAng = 0;
+			if (RearLeftAng > 180) RearLeftAng = 180;
+			if (RearLeftAng < 0) RearLeftAng = 0;
+			if (RearRightAng > 180) RearRightAng = 180;
+			if (RearRightAng < 0) RearRightAng = 0;
+			if (FrontLeftSpeed > 500) FrontLeftSpeed = 500;
+			if (FrontLeftSpeed < 0) FrontLeftSpeed = 0;
+			if (FrontRightSpeed > 500) FrontRightSpeed = 500;
+			if (FrontRightSpeed < 0) FrontRightSpeed = 0;
+			if (RearLeftSpeed > 500) RearLeftSpeed = 500;
+			if (RearLeftSpeed < 0) RearLeftSpeed = 0;
+			if (RearRightSpeed > 500) RearRightSpeed = 500;
+			if (RearRightSpeed < 0) RearRightSpeed = 0;
+		}
+
 		/// <summary>
 		/// INotifyPropertyChanged implementation for the MVVM pattern
 		/// </summary>

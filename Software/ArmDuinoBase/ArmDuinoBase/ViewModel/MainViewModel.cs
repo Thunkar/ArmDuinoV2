@@ -119,6 +119,35 @@ namespace ArmDuinoBase.ViewModel
 			{
 				Arm.Horizontal3Ang -= 3;
 			}
+			if (GamepadState.Y)
+			{
+				Rover.FrontLeftSpeed++;
+				Rover.FrontRightSpeed ++;
+				Rover.RearLeftSpeed ++;
+				Rover.RearRightSpeed ++;
+			}
+			else if (GamepadState.A)
+			{
+				Rover.FrontLeftSpeed --;
+				Rover.FrontRightSpeed --;
+				Rover.RearLeftSpeed --;
+				Rover.RearRightSpeed --;
+			}
+			if (GamepadState.LeftShoulder)
+			{
+				Rover.FrontLeftAng ++;
+				Rover.FrontRightAng ++;
+				Rover.RearLeftAng ++;
+				Rover.RearRightAng ++;
+			}
+			else if (GamepadState.RightShoulder)
+			{
+				Rover.FrontLeftAng --;
+				Rover.FrontRightAng --;
+				Rover.RearLeftAng --;
+				Rover.RearRightAng --;
+			}
+			Rover.Normalize();
 			Arm.Normalize();
 			if (!Arm.ControlledByGamePad) GamePadTimer.Stop();
 		}
@@ -137,8 +166,6 @@ namespace ArmDuinoBase.ViewModel
 							CoreWrapper.Write(input);
 						if (TCPHandler.Connected)
 							TCPHandler.Write(input);
-						Arm.Connected = true;
-						//Rover.Connected = true;
 						SendTimer.Start();
 						break;
 					}

@@ -46,7 +46,8 @@ long movementPeriod = 100000;
 
 int incomingByte;
 int readCounter;
-char buffer[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data
+char buffer0[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data from serial0
+char buffer1[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data from serial0
 int data[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0}; //Processed servo data
 int multiplier[] = {1, 10, 100, 1000, 10000}; // Array of multiples of ten to be able to process data efficiently
 boolean reading; 
@@ -233,7 +234,7 @@ void clearData()
 
 
 
-void processMovementData()
+void processMovementData(int bufferN)
 {
   if(!robotConnected)
   {
@@ -241,6 +242,11 @@ void processMovementData()
     Serial1.println("Robot not connected!");
     return;
   }
+  char* buffer;
+  if(bufferN)
+    buffer = buffer0;
+  else 
+    buffer = buffer1;
   int counter = 0;
   for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE) //Iterates over all data caring about initial chars and steps
   {
@@ -256,12 +262,17 @@ void processMovementData()
 }
 
 
-void dumpInputBuffer()
+void dumpInputBuffer(int bufferN)
 {
+  char* buffer;
+  if(bufferN)
+    buffer = buffer0;
+  else 
+    buffer = buffer1;
   switch(buffer[0])
   {
     case 'M':
-      processMovementData();
+      processMovementData(bufferN);
       return;
     case 'C':
       robotConnected = true;
@@ -348,12 +359,12 @@ void readSerialData()
     else if((char)incomingByte == '%')//Close code
     {
       reading = false;
-      dumpInputBuffer();
+      dumpInputBuffer(0);
       readCounter = 0;
     }
     else
     {
-      buffer[readCounter] = (char)incomingByte;
+      buffer0[readCounter] = (char)incomingByte;
       readCounter++;
     }
   }
@@ -376,12 +387,12 @@ void readSerial1Data()
     else if((char)incomingByte == '%')//Close code
     {
       reading = false;
-      dumpInputBuffer();
+      dumpInputBuffer(1);
       readCounter = 0;
     }
     else
     {
-      buffer[readCounter] = (char)incomingByte;
+      buffer1[readCounter] = (char)incomingByte;
       readCounter++;
     }
   }

@@ -21,9 +21,8 @@
 			<Grid.ColumnDefinitions>
 				<ColumnDefinition Width="*"/>
 				<ColumnDefinition Width="2*"/>
-				<ColumnDefinition Width="2*"/>
 			</Grid.ColumnDefinitions>
-			<Grid Margin="10">
+			<Grid Margin="10" HorizontalAlignment="Center">
 				<Grid.ColumnDefinitions>
 					<ColumnDefinition Width="150"/>
 					<ColumnDefinition Width="100"/>
@@ -78,7 +77,7 @@
 				<TextBlock Text="Rear right speed" Grid.Row="15" Style="{StaticResource h4}"/>
 				<TextBlock Text="{Binding Rover.RearRightSpeed}" Grid.Column="1" Grid.Row="15" Style="{StaticResource h4}"/>
 			</Grid>
-			<TabControl Grid.Column="1" SelectionChanged="TabControl_SelectionChanged" SelectedIndex="{Binding Arm.SelectedTab}">
+			<TabControl Grid.Column="1" Margin="50,0" SelectionChanged="TabControl_SelectionChanged" SelectedIndex="{Binding Arm.SelectedTab}">
 				<TabItem x:Name="SliderTab">
 					<TabItem.Header>
 						<TextBlock Text="Sliders" Style="{StaticResource TabStyle}"/>
@@ -123,26 +122,9 @@
 						<TextBlock Text="Gamepad" Style="{StaticResource TabStyle}"/>
 					</TabItem.Header>
 					<Grid>
-
 					</Grid>
 				</TabItem>
 			</TabControl>
-			<Grid Grid.Column="2" Margin="10">
-				<Grid.RowDefinitions>
-					<RowDefinition Height="*"/>
-					<RowDefinition Height="3*"/>
-					<RowDefinition Height="3*"/>
-					<RowDefinition Height="3*"/>
-				</Grid.RowDefinitions>
-				<Grid.ColumnDefinitions>
-					<ColumnDefinition Width="*"/>
-					<ColumnDefinition Width="10*"/>
-				</Grid.ColumnDefinitions>
-				<TextBlock Grid.ColumnSpan="2" Text="Rover controls" HorizontalAlignment="Center" FontSize="24" FontWeight="Bold"/>
-				<Button x:Name="Acc" Grid.Row="1" Content="+" FontSize="48" Click="Acc_Click"/>
-				<Button x:Name="ResetSpeed" Grid.Row="2" Content="R" FontSize="48" Click="ResetSpeed_Click"/>
-				<Button x:Name="Dec" Grid.Row="3" Content="-" FontSize="48" Click="Dec_Click"/>
-			</Grid>
 		</Grid>
 		<Button BorderBrush="Transparent" x:Name="SettingsButton" Background="Transparent" Margin="0,0,50,0" Height="50" VerticalAlignment="Center" HorizontalAlignment="Right" Click="SettingsButton_Click">
 			<Button.Content>
@@ -154,6 +136,28 @@
 				<StackPanel Background="White" HorizontalAlignment="Center" VerticalAlignment="Center">
 					<TextBlock Text="Connection settings" Margin="5" FontSize="24"/>
 					<TabControl Margin="5">
+						<TabItem>
+							<TabItem.Header>
+								<TextBlock Text="General"/>
+							</TabItem.Header>
+							<StackPanel Margin="5">
+								<Grid>
+									<Grid.ColumnDefinitions>
+										<ColumnDefinition Width="Auto"/>
+										<ColumnDefinition Width="*"/>
+									</Grid.ColumnDefinitions>
+									<Grid.RowDefinitions>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+										<RowDefinition Height="*"/>
+									</Grid.RowDefinitions>
+									<TextBlock Text="Arm" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									<TextBlock Text="Rover" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+									<CheckBox Grid.Column="1" x:Name="ArmActivated" Margin="5" IsChecked="{Binding Arm.Connected}"/>
+									<CheckBox Grid.Column="1" Grid.Row="1" x:Name="RoverActivated" Margin="5" IsChecked="{Binding Rover.Connected}" />
+								</Grid>
+							</StackPanel>
+						</TabItem>
 						<TabItem>
 							<TabItem.Header>
 								<TextBlock Text="COM Port"/>
