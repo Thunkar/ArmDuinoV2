@@ -133,19 +133,44 @@ namespace ArmDuinoBase.ViewModel
 				Rover.RearLeftSpeed --;
 				Rover.RearRightSpeed --;
 			}
+			if (GamepadState.X)
+			{
+				Rover.FrontLeftSpeed = 0;
+				Rover.RearLeftSpeed = 0;
+				Rover.FrontRightSpeed = 500;
+				Rover.RearRightSpeed = 500;
+			}
+			else if (GamepadState.B)
+			{
+				Rover.FrontLeftSpeed = 500;
+				Rover.RearLeftSpeed = 500;
+				Rover.FrontRightSpeed = 0;
+				Rover.RearRightSpeed = 0;
+			}
+			if (GamepadState.Start)
+			{
+				Rover.FrontLeftSpeed = 255;
+				Rover.RearLeftSpeed = 255;
+				Rover.FrontRightSpeed = 255;
+				Rover.RearRightSpeed = 255;
+				Rover.FrontLeftAng = 90;
+				Rover.FrontRightAng = 90;
+				Rover.RearLeftAng = 90;
+				Rover.RearRightAng = 90;
+			}
 			if (GamepadState.LeftShoulder)
 			{
-				Rover.FrontLeftAng ++;
-				Rover.FrontRightAng ++;
-				Rover.RearLeftAng ++;
-				Rover.RearRightAng ++;
+				Rover.FrontLeftAng--;
+				Rover.FrontRightAng--;
+				Rover.RearLeftAng--;
+				Rover.RearRightAng--;
 			}
 			else if (GamepadState.RightShoulder)
 			{
-				Rover.FrontLeftAng --;
-				Rover.FrontRightAng --;
-				Rover.RearLeftAng --;
-				Rover.RearRightAng --;
+				Rover.FrontLeftAng++;
+				Rover.FrontRightAng++;
+				Rover.RearLeftAng++;
+				Rover.RearRightAng++;
 			}
 			Rover.Normalize();
 			Arm.Normalize();
