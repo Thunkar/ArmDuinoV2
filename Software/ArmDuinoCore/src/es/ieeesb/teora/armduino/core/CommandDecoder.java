@@ -10,15 +10,17 @@ public class CommandDecoder
 	/**
 	 * Thread-safe queue that holds the commands that have not been sent yet
 	 */
-	private LinkedBlockingQueue<char[]> commandQueue;
+	private LinkedBlockingQueue<char[]> motorsCommandQueue;
+	private LinkedBlockingQueue<char[]> sensorsCommandQueue;
 	
 	/** 
 	 * Constructor
-	 * @param commandQueue
+	 * @param motorsCommandQueue
 	 */
-	public CommandDecoder(LinkedBlockingQueue<char[]> commandQueue)
+	public CommandDecoder(LinkedBlockingQueue<char[]> motorsCommandQueue, LinkedBlockingQueue<char[]> sensorsCommandQueue)
 	{
-		this.commandQueue = commandQueue;
+		this.motorsCommandQueue = motorsCommandQueue;
+		this.sensorsCommandQueue = sensorsCommandQueue;
 	}
 	
 	/**
@@ -28,14 +30,14 @@ public class CommandDecoder
 	 */
 	public enum COMMAND_TYPE 
 	{ 
-		STATUS, MOVE, CONNECT, RESET, INVALID, STOP, QUEUE; 
+		READSENSORS, MOVE, CONNECT, RESET, INVALID, STOP, QUEUE, READMOTORS; 
 		
 		public static COMMAND_TYPE fromString(String str)
 		{
 			switch(str)
 			{
-			case "STATUS":
-				return STATUS;
+			case "READSENSORS":
+				return READSENSORS;
 			case "MOVE":
 				return MOVE;
 			case "CONNECT":
@@ -46,6 +48,8 @@ public class CommandDecoder
 				return STOP;
 			case "QUEUE":
 				return QUEUE;
+			case "READMOTORS":
+				return READMOTORS;
 			default:
 				return INVALID;
 			}
@@ -66,24 +70,27 @@ public class CommandDecoder
 		case INVALID:
 			Log.LogError(Log.SUBTYPE.COMMAND, "Command not recognized");
 			return;
-		case STATUS:
-			commandQueue.put(MessageConformer.getStatusRequest());
+		case READMOTORS:
+			motorsCommandQueue.put(MessageConformer.getReadMotorsRequest());
+			return;
+		case READSENSORS:
+			Log.LogEvent(Log.SUBTYPE.SENSORS, Main.Sensors.getBattery1() + " " + Main.Sensors.getBattery2());
 			return;
 		case MOVE:
-			commandQueue.put(MessageConformer.getMoveMessage(extra));
+			motorsCommandQueue.put(MessageConformer.getMoveMessage(extra));
 			return;
 		case CONNECT:
 			char[] commandToSend = MessageConformer.getConnectRequest();
-			commandQueue.put(commandToSend);
+			motorsCommandQueue.put(commandToSend);
 			return;
 		case RESET:
-			commandQueue.put(MessageConformer.getResetRequest());
+			motorsCommandQueue.put(MessageConformer.getResetRequest());
 			return;
 		case QUEUE:
-			Log.LogWarning(Log.SUBTYPE.SYSTEM, "Command queue size: " + commandQueue.size());
+			Log.LogWarning(Log.SUBTYPE.SYSTEM, "Command queue size: " + motorsCommandQueue.size());
 			return;
 		case STOP:
-			commandQueue.put(MessageConformer.getResetRequest());
+			motorsCommandQueue.put(MessageConformer.getResetRequest());
 			Main.stop();
 			return;
 		}

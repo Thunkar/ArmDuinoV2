@@ -107,6 +107,7 @@ namespace ArmDuinoBase
             Dispatcher.Invoke(new Action(() =>
             {
                 ConsoleData newData = new ConsoleData(incomingData);
+				MainViewModel.Current.Sensors.ParseSensorLine(incomingData);
                 MainViewModel.Current.ConsoleLog.Add(newData);
                 Console.ScrollIntoView(newData);
                 if (MainViewModel.Current.ConsoleLog.Count > 500) MainViewModel.Current.ConsoleLog.RemoveAt(0);

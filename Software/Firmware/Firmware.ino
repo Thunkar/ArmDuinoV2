@@ -1,4 +1,4 @@
-#include <SoftPWM.h> //Soft pwm is used to control motors in analog outputs
+#include <SoftPWM.h> //Soft pwm is used to control motors in analog pins
 #include <SoftPWM_timer.h>
 #include <Servo.h>
 
@@ -7,8 +7,8 @@ const int FIELD_SIZE = 4;
 const int SERVO_COUNT=11;
 
 typedef struct motor{ //Describes motor values. In H-Bridges, two analog outputs are used, one for forward power and other for backward power.
-  int forward;
-  int backward;
+  uint8_t forward;
+  uint8_t backward;
 } Motor;
 
 //Servo definitions
@@ -46,8 +46,7 @@ long movementPeriod = 100000;
 
 int incomingByte;
 int readCounter;
-char buffer0[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data from serial0
-char buffer1[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data from serial0
+char buffer[FIELD_COUNT*FIELD_SIZE+3]; //Buffer for incoming data
 int data[] = {90,90,90,90,90,90,170,90,90,90,90,0,0,0,0}; //Processed servo data
 int multiplier[] = {1, 10, 100, 1000, 10000}; // Array of multiples of ten to be able to process data efficiently
 boolean reading; 
@@ -150,8 +149,10 @@ void moveStep(int servo, int target){
       }else{ //Else, use softpwm
         if(positions[servo]>255){ //Since motors can go backward and forward, numbers greater than than 255 mean forward power
           SoftPWMSet(motors[servo-SERVO_COUNT].forward,positions[servo]-256);
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,0);
         }else{
-          SoftPWMSet(motors[servo-SERVO_COUNT].backward,positions[servo]); //And viceversa.
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,255-positions[servo]); //And viceversa.
+          SoftPWMSet(motors[servo-SERVO_COUNT].forward,0);
         }
       }
       lastSteps[servo] = micros(); //Update last step
@@ -163,8 +164,10 @@ void moveStep(int servo, int target){
       }else{
         if(positions[servo]>255){
           SoftPWMSet(motors[servo-SERVO_COUNT].forward,positions[servo]-256);
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,0);
         }else{
-          SoftPWMSet(motors[servo-SERVO_COUNT].backward,positions[servo]);
+          SoftPWMSet(motors[servo-SERVO_COUNT].forward,0);
+          SoftPWMSet(motors[servo-SERVO_COUNT].backward,255-positions[servo]);
         }
       }
       lastSteps[servo] = micros();
@@ -234,7 +237,7 @@ void clearData()
 
 
 
-void processMovementData(int bufferN)
+void processMovementData()
 {
   if(!robotConnected)
   {
@@ -242,11 +245,6 @@ void processMovementData(int bufferN)
     Serial1.println("Robot not connected!");
     return;
   }
-  char* buffer;
-  if(bufferN)
-    buffer = buffer0;
-  else 
-    buffer = buffer1;
   int counter = 0;
   for(int i = 3; i < FIELD_COUNT*FIELD_SIZE+3; i = i + FIELD_SIZE) //Iterates over all data caring about initial chars and steps
   {
@@ -262,17 +260,12 @@ void processMovementData(int bufferN)
 }
 
 
-void dumpInputBuffer(int bufferN)
+void dumpInputBuffer()
 {
-  char* buffer;
-  if(bufferN)
-    buffer = buffer0;
-  else 
-    buffer = buffer1;
   switch(buffer[0])
   {
     case 'M':
-      processMovementData(bufferN);
+      processMovementData();
       return;
     case 'C':
       robotConnected = true;
@@ -290,7 +283,7 @@ void dumpInputBuffer(int bufferN)
       Serial1.println("Disconnected");
       Serial.println("Disconnected");
       return;
-    case 'S':
+    case 'T':
       sendStatus();
       return;
     default:
@@ -347,8 +340,6 @@ void readSerialData()
   incomingByte = Serial.read(); //Read byte
   if(incomingByte != -1) 
   {
-    Serial1.write((char)incomingByte);
-    Serial.write((char)incomingByte);
     if(!reading)
     {
       if((char)incomingByte =='&')//Open code
@@ -359,12 +350,12 @@ void readSerialData()
     else if((char)incomingByte == '%')//Close code
     {
       reading = false;
-      dumpInputBuffer(0);
+      dumpInputBuffer();
       readCounter = 0;
     }
     else
     {
-      buffer0[readCounter] = (char)incomingByte;
+      buffer[readCounter] = (char)incomingByte;
       readCounter++;
     }
   }
@@ -375,8 +366,6 @@ void readSerial1Data()
   incomingByte = Serial1.read(); //Read byte
   if(incomingByte != -1) 
   {
-    Serial1.write((char)incomingByte);
-    Serial.write((char)incomingByte);
     if(!reading)
     {
       if((char)incomingByte =='&')//Open code
@@ -387,12 +376,12 @@ void readSerial1Data()
     else if((char)incomingByte == '%')//Close code
     {
       reading = false;
-      dumpInputBuffer(1);
+      dumpInputBuffer();
       readCounter = 0;
     }
     else
     {
-      buffer1[readCounter] = (char)incomingByte;
+      buffer[readCounter] = (char)incomingByte;
       readCounter++;
     }
   }
@@ -402,7 +391,6 @@ void readSerial1Data()
 
 void setup()
 {
-    delay(5000);
     gripper.attach(6);
     gripper.write(170);
     delay(500);
@@ -425,14 +413,23 @@ void setup()
     blAngle.attach(3);
     delay(500);
     brAngle.attach(4);
-    flSpeed.forward=A0;
-    flSpeed.backward=A1;
-    frSpeed.forward=A2;
-    frSpeed.backward=A3;
-    blSpeed.forward=A4;
-    blSpeed.backward=A5;
-    brSpeed.forward=9;
-    brSpeed.backward=13;
+    pinMode(A0,OUTPUT);
+    pinMode(A1,OUTPUT);
+    pinMode(A2,OUTPUT);
+    pinMode(A3,OUTPUT);
+    pinMode(A4,OUTPUT);
+    pinMode(A5,OUTPUT);
+    pinMode(9,OUTPUT);
+    pinMode(13,OUTPUT);
+    motors[0].forward=A0;
+    motors[0].backward=A1;
+    motors[1].forward=A2;
+    motors[1].backward=A3;
+    motors[2].forward=A4;
+    motors[2].backward=A5;
+    motors[3].forward=9;
+    motors[3].backward=13;
+     
     
     // gripper signal to indicate we are ready to receive stuff
     delay(300);
@@ -442,6 +439,7 @@ void setup()
     Serial.begin(115200);
     Serial1.begin(38400);
     SoftPWMBegin();
+       cleanMotors();
 }
 
 
@@ -450,4 +448,10 @@ void loop()
   readSerialData();
   readSerial1Data();
   moveStuff();
+}
+void cleanMotors(){
+  for(int i=0;i<FIELD_COUNT-SERVO_COUNT;i++){
+     SoftPWMSet(motors[i].forward,0);
+     SoftPWMSet(motors[i].backward,0);
+  }
 }

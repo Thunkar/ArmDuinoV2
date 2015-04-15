@@ -69,6 +69,7 @@
     <Compile Include="Model\ConsoleData.cs" />
     <Compile Include="Model\GamepadState.cs" />
     <Compile Include="Model\Rover.cs" />
+    <Compile Include="Model\Sensors.cs" />
     <Compile Include="Model\TCPHandler.cs" />
     <Compile Include="Model\TCPIncomingDataEventArgs.cs" />
     <Compile Include="Model\WebcamWrapper.cs" />

@@ -11,14 +11,18 @@ public class CommandSender implements Runnable
 	/**
 	 * Thread-safe queue shared with the decoder. Every command stored here is set to be sent to the robot
 	 */
-	private LinkedBlockingQueue<char[]> commandsToSend;
-	private ProtocolManager protocol;
+	private LinkedBlockingQueue<char[]> motorCommandsToSend;
+	private ProtocolManager motorsPort;
+	private LinkedBlockingQueue<char[]> sensorCommandsToSend;
+	private ProtocolManager sensorsPort;
 	
 	
-	public CommandSender(ProtocolManager protocol, LinkedBlockingQueue<char[]> commandsToSend)
+	public CommandSender(ProtocolManager motorsPort, ProtocolManager sensorsPort, LinkedBlockingQueue<char[]> motorCommandsToSend, LinkedBlockingQueue<char[]> sensorCommandsToSend)
 	{
-		this.commandsToSend = commandsToSend;
-		this.protocol = protocol;
+		this.motorCommandsToSend = motorCommandsToSend;
+		this.motorsPort = motorsPort;
+		this.sensorCommandsToSend = sensorCommandsToSend;
+		this.sensorsPort = sensorsPort;
 	}
 
 	public boolean isActive()
@@ -41,10 +45,15 @@ public class CommandSender implements Runnable
 		Log.LogEvent(Log.SUBTYPE.DATA_OUTPUT, "Command sender starting");
 		while (active)
 		{
-			if(!commandsToSend.isEmpty())
+			if(!motorCommandsToSend.isEmpty())
 			{
-				char[] commandToSend = commandsToSend.poll();
-				protocol.write(commandToSend);
+				char[] commandToSend = motorCommandsToSend.poll();
+				motorsPort.write(commandToSend);
+			}
+			if(!sensorCommandsToSend.isEmpty())
+			{
+				char[] commandToSend = sensorCommandsToSend.poll();
+				sensorsPort.write(commandToSend);
 			}
 		}
 		Log.LogEvent(Log.SUBTYPE.DATA_OUTPUT, "Command sender shutting down");

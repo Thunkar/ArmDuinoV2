@@ -37,6 +37,7 @@ namespace ArmDuinoBase.ViewModel
 		public WebcamWrapper WebcamWrapper { get; set; }
 		public Arm Arm { get; set; }
 		public Rover Rover { get; set; }
+		public Sensors Sensors { get; set; }
 		public GamepadState GamepadState { get; set; }
 
 		/// <summary>
@@ -73,6 +74,7 @@ namespace ArmDuinoBase.ViewModel
 			GamePadTimer = new System.Timers.Timer();
 			Arm = new Arm();
 			Rover = new Rover();
+			Sensors = new Sensors();
 			//LoadFromFile("commands.arm");
 			TimeSpan SendSpan = new TimeSpan(0, 0, 0, 0, 100);
 			TimeSpan CommandSpan = new TimeSpan(0, 0, 0, 0, 500);
@@ -322,6 +324,7 @@ namespace ArmDuinoBase.ViewModel
 		void SendTimer_Elapsed(object sender, ElapsedEventArgs e)
 		{
 			WriteCommand("MOVE");
+			WriteCommand("READSENSORS");
 		}
 
 		/// <summary>
