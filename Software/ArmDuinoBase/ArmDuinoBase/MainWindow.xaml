@@ -126,7 +126,7 @@
 					</Grid>
 				</TabItem>
 			</TabControl>
-			<Grid Grid.Column="2" Margin="10" HorizontalAlignment="Center">
+			<Grid Grid.Column="2" Margin="10">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
