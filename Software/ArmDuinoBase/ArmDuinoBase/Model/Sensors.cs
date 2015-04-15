@@ -41,9 +41,10 @@ namespace ArmDuinoBase.Model
 		public void ParseSensorLine(string sensorLine)
 		{
 			string[] splitted = sensorLine.Split(' ');
-			if (!splitted[2].Equals("[SENSORS]")) return;
-			Battery1Level = (Double.Parse(splitted[3])/1024)*10;
-			Battery2Level = (Double.Parse(splitted[4])/1024)*10;
+			string type = splitted[1].Substring(splitted[1].LastIndexOf("["));
+            if (!type.Equals("[SENSORS]")) return;
+			Battery1Level = (Double.Parse(splitted[2])/1024)*10;
+			Battery2Level = (Double.Parse(splitted[3])/1024)*10;
 		}
 
 		/// <summary>
