@@ -50,12 +50,12 @@ namespace ArmDuinoBase.Model
         {
             CoreProcess = new Process();
             string currentDir = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-			string starter = "-jar -Djava.library.path=lib " + currentDir + "\\ArmDuinoCore\\ArmDuinoCore.jar " + COMPort + " " + speed + " " + segments + " " + fields + " " + server + " " + port + " " + debug;
+			string starter = " -Djava.library.path=lib -jar " + currentDir + "\\ArmDuinoCore\\ArmDuinoCore.jar " + COMPort + " " + speed + " " + segments + " " + fields + " " + server + " " + port + " " + debug;
 			string javaPath = GetJavaInstallationPath();
             if (!string.IsNullOrEmpty(javaPath))
             {
                 
-                var startInfo = new ProcessStartInfo(javaPath + "\\java.exe", starter);
+                var startInfo = new ProcessStartInfo(javaPath + "\\bin\\java.exe", starter);
                 startInfo.WorkingDirectory = currentDir + "\\ArmDuinoCore";
                 startInfo.RedirectStandardInput = startInfo.RedirectStandardOutput = true;
                 startInfo.UseShellExecute = false;
