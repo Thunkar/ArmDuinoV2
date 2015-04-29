@@ -77,19 +77,23 @@ public class CommandDecoder
 			Log.LogEvent(Log.SUBTYPE.SENSORS, Main.Sensors.getBattery1() + " " + Main.Sensors.getBattery2());
 			return;
 		case MOVE:
+			Log.LogEvent(Log.SUBTYPE.ACK, "ACK");
 			motorsCommandQueue.put(MessageConformer.getMoveMessage(extra));
 			return;
 		case CONNECT:
+			Log.LogEvent(Log.SUBTYPE.ACK, "ACK");
 			char[] commandToSend = MessageConformer.getConnectRequest();
 			motorsCommandQueue.put(commandToSend);
 			return;
 		case RESET:
+			Log.LogEvent(Log.SUBTYPE.ACK, "ACK");
 			motorsCommandQueue.put(MessageConformer.getResetRequest());
 			return;
 		case QUEUE:
 			Log.LogWarning(Log.SUBTYPE.SYSTEM, "Command queue size: " + motorsCommandQueue.size());
 			return;
 		case STOP:
+			Log.LogEvent(Log.SUBTYPE.ACK, "ACK");
 			motorsCommandQueue.put(MessageConformer.getResetRequest());
 			Main.stop();
 			return;
