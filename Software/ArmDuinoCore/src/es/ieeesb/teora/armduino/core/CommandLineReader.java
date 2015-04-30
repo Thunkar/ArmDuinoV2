@@ -9,7 +9,7 @@ import es.ieeesb.teora.armduino.util.Log;
  * @author Gregorio
  *
  */
-public class CommandInterpreter implements Runnable
+public class CommandLineReader implements Runnable
 {
 
 	/**
@@ -39,7 +39,7 @@ public class CommandInterpreter implements Runnable
 	 * Constructor
 	 * @param IO
 	 */
-	public CommandInterpreter(Kattio IO)
+	public CommandLineReader(Kattio IO)
 	{
 		this.IO = IO;
 		active = true;

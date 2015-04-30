@@ -22,7 +22,7 @@ public class Main
 
 	private static ProtocolManager motorsPort;
 	private static ProtocolManager sensorsPort;
-	private static CommandInterpreter commandInterpreter;
+	private static CommandLineReader commandLineReader;
 	private static CommandSender commandSender;
 	private static NFC NFC;
 	private static Thread commandInterpreterThread;
@@ -65,10 +65,10 @@ public class Main
 		motorsPort = new ProtocolManager(MOTORS_PORT, MOTORS_BAUD_RATE, Log.SUBTYPE.MOTORS);
 		sensorsPort = new ProtocolManager(SENSORS_PORT, SENSORS_BAUD_RATE, Log.SUBTYPE.SENSORS);
 		commandDecoder = new CommandDecoder(motorCommandsToSend, sensorCommandsToSend);
-		commandInterpreter = new CommandInterpreter(sysIO);
+		commandLineReader = new CommandLineReader(sysIO);
 		commandSender = new CommandSender(motorsPort, sensorsPort, motorCommandsToSend, sensorCommandsToSend);
 		commandSenderThread = new Thread(commandSender);
-		commandInterpreterThread = new Thread(commandInterpreter);
+		commandInterpreterThread = new Thread(commandLineReader);
 		commandInterpreterThread.start();
 		if (SERVER_ENABLED)
 		{
