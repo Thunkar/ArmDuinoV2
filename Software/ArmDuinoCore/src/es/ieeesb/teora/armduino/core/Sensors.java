@@ -11,6 +11,8 @@ public class Sensors
 	private int rearLeft;
 	private int rearRight;
 	
+	private int ultrasonic;
+	
 	public int getFrontLeft()
 	{
 		return frontLeft;
@@ -59,6 +61,14 @@ public class Sensors
 	{
 		this.battery2 = battery2;
 	}
+	public int getUltrasonic()
+	{
+		return ultrasonic;
+	}
+	public void setUltrasonic(int ultrasonic)
+	{
+		this.ultrasonic = ultrasonic;
+	}
 	
 	public void parseSensorsLine(String sensorLine)
 	{
@@ -69,6 +79,13 @@ public class Sensors
 		frontRight = Integer.parseInt(splitted[3]);
 		rearLeft = Integer.parseInt(splitted[4]);
 		rearRight = Integer.parseInt(splitted[5]);
+		ultrasonic = Integer.parseInt(splitted[6]);
 	}
+	
+	public String getSensorLine()
+	{
+		return battery1 + " " + battery2 + " " + frontLeft + " " + frontRight + " " + rearLeft + " " + rearRight + " " + ultrasonic;
+	}
+
 	
 }

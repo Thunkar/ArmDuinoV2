@@ -19,13 +19,15 @@ public class Main
 	public static CommandDecoder commandDecoder;
 	public static TCPServer server;
 	public static Sensors Sensors;
+	public static Motors Motors;
+	public static Navigation Navigation;
 
 	private static ProtocolManager motorsPort;
 	private static ProtocolManager sensorsPort;
 	private static CommandLineReader commandLineReader;
 	private static CommandSender commandSender;
 	private static NFC NFC;
-	private static Thread commandInterpreterThread;
+	private static Thread commandLineReaderThread;
 	private static Thread commandSenderThread;
 	private static Thread serverThread;
 	private static Thread nfcThread;
@@ -61,6 +63,8 @@ public class Main
 		LinkedBlockingQueue<char[]> sensorCommandsToSend = new LinkedBlockingQueue<char[]>();
 		Kattio sysIO = new Kattio(System.in, System.out);
 		Sensors = new Sensors();
+		Motors = new Motors();
+		Navigation = new Navigation(Motors, Sensors);
 		server = null;
 		motorsPort = new ProtocolManager(MOTORS_PORT, MOTORS_BAUD_RATE, Log.SUBTYPE.MOTORS);
 		sensorsPort = new ProtocolManager(SENSORS_PORT, SENSORS_BAUD_RATE, Log.SUBTYPE.SENSORS);
@@ -68,8 +72,8 @@ public class Main
 		commandLineReader = new CommandLineReader(sysIO);
 		commandSender = new CommandSender(motorsPort, sensorsPort, motorCommandsToSend, sensorCommandsToSend);
 		commandSenderThread = new Thread(commandSender);
-		commandInterpreterThread = new Thread(commandLineReader);
-		commandInterpreterThread.start();
+		commandLineReaderThread = new Thread(commandLineReader);
+		commandLineReaderThread.start();
 		if (SERVER_ENABLED)
 		{
 			server = new TCPServer(SERVER_PORT);

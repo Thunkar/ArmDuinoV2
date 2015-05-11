@@ -2,33 +2,10 @@ package es.ieeesb.teora.armduino.core;
 
 public class MessageConformer
 {
-
-	public static final char MOTORSREQUEST = 'T';  
-	public static final char SENSORSREQUEST = 'S';
 	public static final char CONNECTCODE = 'C';
 	public static final char SENDCODE = 'M';
 	public static final char RESETCODE = 'R';
 	
-	/**
-	 * Transforms a status request into a status message
-	 * @return the status message according to the protocol
-	 */
-	public static char[] getReadMotorsRequest()
-	{
-		char[] statusRequest = {MOTORSREQUEST};
-		return finishMessage(statusRequest);
-	}
-	
-	/**
-	 * Transforms a status request into a status message
-	 * @return the status message according to the protocol
-	 */
-	public static char[] getReadSensorsRequest()
-	{
-		char[] statusRequest = {SENSORSREQUEST};
-		return finishMessage(statusRequest);
-	}
-
 	
 	/**
 	 * Takes a message and adds the start and finish control characters

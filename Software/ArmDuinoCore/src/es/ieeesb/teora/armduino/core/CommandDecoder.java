@@ -11,7 +11,7 @@ public class CommandDecoder
 	 * Thread-safe queue that holds the commands that have not been sent yet
 	 */
 	private LinkedBlockingQueue<char[]> motorsCommandQueue;
-	private LinkedBlockingQueue<char[]> sensorsCommandQueue;
+	//private LinkedBlockingQueue<char[]> sensorsCommandQueue;
 	
 	/** 
 	 * Constructor
@@ -20,7 +20,7 @@ public class CommandDecoder
 	public CommandDecoder(LinkedBlockingQueue<char[]> motorsCommandQueue, LinkedBlockingQueue<char[]> sensorsCommandQueue)
 	{
 		this.motorsCommandQueue = motorsCommandQueue;
-		this.sensorsCommandQueue = sensorsCommandQueue;
+		//this.sensorsCommandQueue = sensorsCommandQueue;
 	}
 	
 	/**
@@ -30,7 +30,7 @@ public class CommandDecoder
 	 */
 	public enum COMMAND_TYPE 
 	{ 
-		READSENSORS, MOVE, CONNECT, RESET, INVALID, STOP, QUEUE, READMOTORS; 
+		READSENSORS, MOVE, CONNECT, RESET, INVALID, STOP, QUEUE, READMOTORS, READNAVIGATION;
 		
 		public static COMMAND_TYPE fromString(String str)
 		{
@@ -50,6 +50,8 @@ public class CommandDecoder
 				return QUEUE;
 			case "READMOTORS":
 				return READMOTORS;
+			case "READNAVIGATION":
+				return READNAVIGATION;
 			default:
 				return INVALID;
 			}
@@ -71,10 +73,13 @@ public class CommandDecoder
 			Log.LogError(Log.SUBTYPE.COMMAND, "Command not recognized");
 			return;
 		case READMOTORS:
-			motorsCommandQueue.put(MessageConformer.getReadMotorsRequest());
+			Log.LogEvent(Log.SUBTYPE.MOTORS, Main.Motors.getMotorsLine());
 			return;
 		case READSENSORS:
-			Log.LogEvent(Log.SUBTYPE.SENSORS, Main.Sensors.getBattery1() + " " + Main.Sensors.getBattery2());
+			Log.LogEvent(Log.SUBTYPE.SENSORS, Main.Sensors.getSensorLine());
+			return;
+		case READNAVIGATION:
+			Log.LogEvent(Log.SUBTYPE.NAVIGATION, Main.Navigation.getNavigationline());
 			return;
 		case MOVE:
 			Log.LogEvent(Log.SUBTYPE.ACK, "ACK");
@@ -93,7 +98,6 @@ public class CommandDecoder
 			Log.LogWarning(Log.SUBTYPE.SYSTEM, "Command queue size: " + motorsCommandQueue.size());
 			return;
 		case STOP:
-			Log.LogEvent(Log.SUBTYPE.ACK, "ACK");
 			motorsCommandQueue.put(MessageConformer.getResetRequest());
 			Main.stop();
 			return;

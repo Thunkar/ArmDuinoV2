@@ -89,11 +89,13 @@ public class ProtocolManager implements SerialPortEventListener
 			String inputLine = incomingData.toString();
 			if (inputLine != "" && inputLine.length() != 0)
 			{
-				if (portType == Log.SUBTYPE.MOTORS)
-					Log.LogEvent(portType, inputLine);
-				else
+				if (portType == Log.SUBTYPE.MOTORS){
+					Main.Motors.parseMotorsLine(inputLine);
+				}
+				else if (portType == Log.SUBTYPE.SENSORS)
 				{
 					Main.Sensors.parseSensorsLine(inputLine);
+					Main.Navigation.updateNavigation();
 				}
 			}
 
