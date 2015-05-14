@@ -65,9 +65,9 @@ namespace ArmDuinoBase
             if (Int32.TryParse(Port.Text, out port) && Int32.TryParse(VideoPort.Text, out videoPort))
             {
                 MainViewModel.Current.StartTCPConnection(IP.Text, port);
-				MainViewModel.Current.StartVideoConnection(IP.Text, videoPort);
+				//MainViewModel.Current.StartVideoConnection(IP.Text, videoPort);
                 MainViewModel.Current.TCPHandler.IncomingData += TCPHandler_IncomingData;
-				MainViewModel.Current.WebcamWrapper.CambozolaProcess.OutputDataReceived += CambozolaProcess_OutputDataReceived;
+				//MainViewModel.Current.WebcamWrapper.CambozolaProcess.OutputDataReceived += CambozolaProcess_OutputDataReceived;
             }
             else
             {

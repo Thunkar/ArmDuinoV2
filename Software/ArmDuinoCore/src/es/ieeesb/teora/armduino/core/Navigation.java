@@ -26,7 +26,7 @@ public class Navigation
 	
 	public String getNavigationline()
 	{
-		String result = frontLeftEncoder + " " + frontRightEncoder + " " + rearLeftEncoder + " " + rearRightEncoder;
+		String result = frontLeftEncoder + " " + frontRightEncoder + " " + rearLeftEncoder + " " + rearRightEncoder + " " + motors.getFrontLeftTwist() + " " + motors.getFrontRightTwist() + " " + motors.getRearLeftTwist() + " " + motors.getRearRightTwist();
 		frontLeftEncoder = 0;
 		frontRightEncoder = 0;
 		rearLeftEncoder = 0;
